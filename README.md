@@ -8,7 +8,7 @@ Aktueller Status:
 
 - Bestehende Leistungs-, Energie- und Heizstab-Lesepunkte sind in `config/vito.xml` enthalten.
 - Die beiden vorhandenen manuellen Kompatibilitaetskommandos `setBetriebsart` (`B000`, nur `0/1/2`) und `setWWEinmal` (`B020`, nur `0/2`) sind auf ausdruecklichen Wunsch lokal und auf dem Raspberry wieder aktiv. Sie nutzen P300 `SETADDR`, nicht den EEPROM-Schreibbefehl, duerfen aber nicht zyklisch angesteuert werden.
-- Die fuenf externen Runtime-Kandidaten `A400`, `A401`, `A403`, `A3C2` und `A3C0` sind auf ausdruecklichen Wunsch als beschreibbare `viessmann.0.set.*`-States vorbereitet. Der Adapter akzeptiert ausschliesslich eine fest kodierte Kommando-/Adress-Whitelist, ganzzahlige sichere Wertebereiche und ignoriert `ack=true`; unbekannte SET-Kommandos bleiben blockiert.
+- Die fuenf externen Runtime-Kandidaten `A400`, `A401`, `A403`, `A3C2` und `A3C0` sind auf ausdruecklichen Wunsch als beschreibbare `viessmann.0.set.*`-States vorbereitet und am 29. August 2026 produktiv deployt. Der Adapter akzeptiert ausschliesslich eine fest kodierte Kommando-/Adress-Whitelist, ganzzahlige sichere Wertebereiche und ignoriert `ack=true`; unbekannte SET-Kommandos bleiben blockiert.
 - Alle Runtime-Feature-Flags stehen standardmäßig auf `false`.
 - Am 27. August 2026 wurden nach ausdruecklicher Freigabe genau zwei zustandsneutrale reale Schreibtelegramme gesendet: `A400=255` und `A3C2=255`. Beide wurden mit `OK` bestaetigt und unmittelbar als `255` zurueckgelesen; Heizstab und Verdichter blieben aus. Aktivwerte wurden nicht geschrieben.
 - Der CP2102-Optolink-Adapter wird wieder stabil unter `/dev/serial/by-id` erkannt. `A400`, `A3C2`, `A440`, `A480` und `779C` sind als Ein-Byte-Reads bestaetigt und als produktive Read-States aufgenommen; die zugehoerigen Soll-/Effektivwerte liefern auf dieser WO1C ueber direkten P300-Zugriff Fehlercode 4.
@@ -16,6 +16,7 @@ Aktueller Status:
 - Der rein lesende Live-Test am 29. August 2026 verwarf die fremden Kandidaten `0400`, `0404` und `5525` nach jeweils drei reproduzierbaren Fehlercode-1-Antworten. Nur `A38F` antwortete dreimal konsistent mit zwei Bytes und wurde ergänzend als Anlagen-Istleistung in Prozent sowie Anlagenstatus aufgenommen; bestehende Adressen wurden nicht ersetzt.
 - Die vcontrold-Quellcodeanalyse und `lib/p300-frame.js` validieren die Ein-Byte-P300-Rahmung. Fuer `A400` und `A3C2` ist jetzt zusaetzlich die Geraeteannahme des Neutralwerts `255` belegt; Aktivwirkung, Timeout und Persistenz bleiben unbestaetigt.
 - Das Exponieren der neuen Schreib-States sendet selbst kein Telegramm. Reale Aktivwerte werden erst in den dokumentierten Einzeltests geschrieben; bis dahin bleiben die Punkte Runtime-Kandidaten und gelten nicht als abschliessend RAM-validiert.
+- Beim produktiven XML-Neuimport wurden alle fuenf Objekte mit `write=true` und korrekten Metadaten angelegt. Alle zugehoerigen States blieben ohne Wert, und die Logpruefung ergab null neue SETADDR-Kommandos.
 - Die produktiv gewünschten ioBroker-Polling-Intervalle sind in `config/iobroker-polling.json` versioniert, weil ein XML-Neuimport des Adapters alle Intervalle auf `-1` zurücksetzt.
 
 ## Lokale Prüfung
