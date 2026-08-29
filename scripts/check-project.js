@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..');
 const vito = fs.readFileSync(path.join(root, 'config', 'vito.xml'), 'utf8');
 const vcontrold = fs.readFileSync(path.join(root, 'config', 'vcontrold.xml'), 'utf8');
 const polling = JSON.parse(fs.readFileSync(path.join(root, 'config', 'iobroker-polling.json'), 'utf8'));
+const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const activeVito = vito.replace(/<!--[\s\S]*?-->/g, '');
 const failures = [];
 
@@ -21,7 +22,35 @@ const backportPackagePath = path.join(
     'adapter-patches',
     'iobroker.viessmann-1.7.4-vitocal-backport.tgz',
 );
-const expectedBackportSha256 = '3f616a9c088360621909e5154d65406c1fb1c6f77b97cc7acecdd6054363e629';
+const expectedBackportSha256 = '33eea4d09e11228a8463763702cc320ac6a92b19cd4846e8cd3b7d8688166198';
+const overviewPath = path.join(root, 'VITOCAL_200S_VCONTROLD_IOBROKER_UEBERSICHT.md');
+const overviewGeneratorPath = path.join(root, 'scripts', 'generate-system-overview.js');
+if (!fs.existsSync(overviewGeneratorPath)) {
+    fail('Missing system overview generator');
+}
+if (packageJson.scripts?.['docs:overview'] !== 'node scripts/generate-system-overview.js') {
+    fail('package.json must expose the docs:overview generator');
+}
+if (!fs.existsSync(overviewPath)) {
+    fail('Missing central Vitocal system overview');
+} else {
+    const overview = fs.readFileSync(overviewPath, 'utf8');
+    for (const requiredOverviewFragment of [
+        '## 3. Sicherheitsmodell: kein EEPROM-Schreibweg',
+        '## 4. Schreibbare ioBroker-Datenpunkte',
+        'viessmann.0.set.BetriebsartExternHK1',
+        'viessmann.0.set.RaumsollExternHK1',
+        'viessmann.0.set.VorlaufsollExternHK1',
+        'viessmann.0.set.WWBetriebsartExtern',
+        'viessmann.0.set.WWSollExtern',
+        '## 8. Vollständiger aktiver `viessmann.0.get`-Katalog',
+        '## 9. Forschungs- und Hilfskommandos',
+    ]) {
+        if (!overview.includes(requiredOverviewFragment)) {
+            fail(`Central system overview is missing: ${requiredOverviewFragment}`);
+        }
+    }
+}
 if (!fs.existsSync(backportPatchPath)) {
     fail('Missing ioBroker.viessmann 1.7.4 source patch');
 } else if (!fs.readFileSync(backportPatchPath, 'utf8').includes('diff --git a/main.js b/main.js')) {
@@ -78,12 +107,20 @@ if (/protocmd=["'](?:seteeprom|EEPROM_WRITE)["']/i.test(activeVito)) {
 const activeSetCommands = [...activeVito.matchAll(/<command\s+[^>]*name=["'](set[^"']+)["'][^>]*>/gi)].map(
     match => match[1],
 );
-const allowedSetCommands = ['setBetriebsart', 'setWWEinmal'];
+const allowedSetCommands = [
+    'setBetriebsart',
+    'setWWEinmal',
+    'setBetriebsartExternHK1',
+    'setRaumsollExternHK1',
+    'setVorlaufsollExternHK1',
+    'setWWBetriebsartExtern',
+    'setWWSollExtern',
+];
 if (
     activeSetCommands.length !== allowedSetCommands.length ||
     allowedSetCommands.some(name => !activeSetCommands.includes(name))
 ) {
-    fail(`Only the established compatibility writes may remain active: ${allowedSetCommands.join(', ')}`);
+    fail(`Only the explicitly guarded writes may remain active: ${allowedSetCommands.join(', ')}`);
 }
 
 expectCommand('setBetriebsart', {
@@ -93,6 +130,41 @@ expectCommand('setBetriebsart', {
 expectCommand('setWWEinmal', {
     elements: { addr: 'B020', len: '1', unit: 'WWO' },
     attributes: { protocmd: 'setaddr' },
+});
+expectCommand('setBetriebsartExternHK1', {
+    elements: { addr: 'A400', len: '1', unit: 'RT' },
+    attributes: { protocmd: 'setaddr', iobrokerRole: 'level.mode' },
+});
+expectCommand('setRaumsollExternHK1', {
+    elements: { addr: 'A401', len: '1', unit: 'UTI' },
+    attributes: {
+        protocmd: 'setaddr',
+        iobrokerRole: 'level.temperature',
+        iobrokerMin: '18',
+        iobrokerMax: '24',
+    },
+});
+expectCommand('setVorlaufsollExternHK1', {
+    elements: { addr: 'A403', len: '1', unit: 'UTI' },
+    attributes: {
+        protocmd: 'setaddr',
+        iobrokerRole: 'level.temperature',
+        iobrokerMin: '20',
+        iobrokerMax: '45',
+    },
+});
+expectCommand('setWWBetriebsartExtern', {
+    elements: { addr: 'A3C2', len: '1', unit: 'RT' },
+    attributes: { protocmd: 'setaddr', iobrokerRole: 'level.mode' },
+});
+expectCommand('setWWSollExtern', {
+    elements: { addr: 'A3C0', len: '1', unit: 'UTI' },
+    attributes: {
+        protocmd: 'setaddr',
+        iobrokerRole: 'level.temperature',
+        iobrokerMin: '40',
+        iobrokerMax: '50',
+    },
 });
 
 for (const match of activeVito.matchAll(/<len>([\s\S]*?)<\/len>/gi)) {
@@ -167,6 +239,7 @@ expectCommand('getStellungExpansionsventilRaw', { elements: { addr: 'B424', len:
 
 const requiredUnits = {
     U10: ["<calc get='V/10'", '<type>uchar</type>'],
+    UTI: ["<calc get='V' set='V'", '<type>uchar</type>', '<entity>°C</entity>'],
     S10: ["<calc get='V/10'", '<type>short</type>'],
     CS: ["<calc get='V/3600'", '<entity>h</entity>'],
     PW3K: ["<calc get='V*3000'", '<entity>W</entity>'],
@@ -255,6 +328,22 @@ if (unitBlock('RT').includes('<type>enum</type>')) {
 }
 if (unitBlock('WWO').includes('<type>enum</type>')) {
     fail('SafeOneTimeDHW must be numeric; enum strings are rejected by ioBroker after numeric parsing');
+}
+if (fs.existsSync(backportPatchPath)) {
+    const backportPatch = fs.readFileSync(backportPatchPath, 'utf8');
+    for (const requiredGuardFragment of [
+        'WRITE_POLICIES',
+        "state.ack === true",
+        'COMMAND_NOT_WHITELISTED',
+        'ADDRESS_POLICY_MISMATCH',
+        'VALUE_OUTSIDE_SAFE_RANGE',
+        'VALUE_TYPE_NOT_SUPPORTED',
+        'MIN_SET_INTERVAL_MS',
+    ]) {
+        if (!backportPatch.includes(requiredGuardFragment)) {
+            fail(`Adapter backport is missing guarded write fragment: ${requiredGuardFragment}`);
+        }
+    }
 }
 const p300Protocol = vcontrold.match(/<protocol name=["']P300["']>([\s\S]*?)<\/protocol>/);
 if (p300Protocol && p300Protocol[1].includes('<command>SEND 01 F4</command>')) {

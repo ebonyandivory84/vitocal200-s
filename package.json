@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "node --test",
-    "check": "node scripts/check-project.js"
+    "check": "node scripts/check-project.js",
+    "docs:overview": "node scripts/generate-system-overview.js"
   },
   "engines": {
     "node": ">=20"

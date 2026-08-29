@@ -1,16 +1,76 @@
 diff --git a/main.js b/main.js
-index b47f4c5..31f9450 100644
+index b47f4c5..558c093 100644
 --- a/main.js
 +++ b/main.js
-@@ -43,6 +43,7 @@ class Viessmann extends utils.Adapter {
+@@ -19,6 +19,21 @@ let toPoll = {};
+ let step = -1;
+ //Hilfsarray zum setzen von Werten
+ let setcommands = [];
++let activeSetCommand = null;
++
++const MIN_SET_INTERVAL_MS = 1000;
++const WRITE_POLICIES = Object.freeze({
++    setBetriebsart: Object.freeze({ address: 'B000', allowedValues: Object.freeze([0, 1, 2]) }),
++    setWWEinmal: Object.freeze({ address: 'B020', allowedValues: Object.freeze([0, 2]) }),
++    setBetriebsartExternHK1: Object.freeze({
++        address: 'A400',
++        allowedValues: Object.freeze([1, 13, 100, 255]),
++    }),
++    setRaumsollExternHK1: Object.freeze({ address: 'A401', min: 18, max: 24 }),
++    setVorlaufsollExternHK1: Object.freeze({ address: 'A403', min: 20, max: 45 }),
++    setWWBetriebsartExtern: Object.freeze({ address: 'A3C2', allowedValues: Object.freeze([1, 255]) }),
++    setWWSollExtern: Object.freeze({ address: 'A3C0', min: 40, max: 50 }),
++});
+
+ //helpers for timeout
+ let timerWait = null;
+@@ -43,6 +58,8 @@ class Viessmann extends utils.Adapter {
          this.on('ready', this.onReady.bind(this));
          this.on('stateChange', this.onStateChange.bind(this));
          this.on('unload', this.onUnload.bind(this));
 +        this.lastValues = new Map();
++        this.lastSetWrites = new Map();
          this.ready = false;
      }
- 
-@@ -253,10 +254,12 @@ class Viessmann extends utils.Adapter {
+
+@@ -85,12 +102,34 @@ class Viessmann extends utils.Adapter {
+      */
+     onStateChange(id, state) {
+         if (state) {
++            if (state.ack === true) {
++                return;
++            }
+             if (id === `${this.namespace}.input.force_polling_interval`) {
+                 this.log.info(`Force polling interval: ${state.val}`);
+                 this.force(state.val);
+             } else {
+-                this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+-                setcommands.push(String(`set${id.substring(16, id.length)} ${state.val}`));
++                const decision = this.validateWriteRequest(id, state.val);
++                if (!decision.ok) {
++                    this.log.warn(`Blocked write for ${id}: ${decision.code}`);
++                    return;
++                }
++                this.log.info(
++                    `Queue validated SETADDR command ${decision.command} for ${decision.address} with value ${decision.value}`,
++                );
++                const pending = {
++                    command: decision.command,
++                    name: decision.name,
++                    address: decision.address,
++                    value: decision.value,
++                };
++                const existingIndex = setcommands.findIndex(item => item.command === pending.command);
++                if (existingIndex === -1) {
++                    setcommands.push(pending);
++                } else {
++                    setcommands[existingIndex] = pending;
++                }
++                this.lastSetWrites.set(decision.command, Date.now());
+             }
+         } else {
+             // The state was deleted
+@@ -253,10 +292,12 @@ class Viessmann extends utils.Adapter {
                          try {
                              let temp = JSON.stringify(result);
                              temp = JSON.parse(temp);
@@ -24,7 +84,7 @@ index b47f4c5..31f9450 100644
                              this.log.info('read vito.xml successfull');
                              this.main();
                          } catch (e) {
-@@ -334,6 +337,98 @@ class Viessmann extends utils.Adapter {
+@@ -334,6 +375,114 @@ class Viessmann extends utils.Adapter {
              return datapoints;
          }
      }
@@ -106,14 +166,30 @@ index b47f4c5..31f9450 100644
 +            }
 +
 +            if (command.startsWith('set') && command.length > 3) {
-+                const name = command.slice(3);
-+                dp.sets[name] = {
++                const defaultName = command.slice(3);
++                const name = attrs.iobrokerName || defaultName;
++                const item = {
 +                    name,
++                    unit: attrs.iobrokerUnit ?? units?.[unitKey]?.unit ?? '',
 +                    description,
 +                    polling: 'nicht möglich',
 +                    type: this.get_type(types?.[unitKey]?.type),
 +                    command,
++                    address: String(cmdRaw.addr?.[0] || '')
++                        .trim()
++                        .toUpperCase(),
++                    role: attrs.iobrokerRole || 'state',
++                    min: this.parseOptionalNumber(attrs.iobrokerMin),
++                    max: this.parseOptionalNumber(attrs.iobrokerMax),
 +                };
++                if (attrs.iobrokerStates) {
++                    try {
++                        item.states = JSON.parse(attrs.iobrokerStates);
++                    } catch (error) {
++                        this.log.warn(`Invalid iobrokerStates JSON for ${command}: ${error}`);
++                    }
++                }
++                dp.sets[name] = item;
 +            }
 +        }
 +
@@ -121,9 +197,9 @@ index b47f4c5..31f9450 100644
 +        return dp;
 +    }
      //###########################################################################################################
- 
+
      //######GET TYPES########################################################################################
-@@ -383,6 +478,75 @@ class Viessmann extends utils.Adapter {
+@@ -383,6 +532,129 @@ class Viessmann extends utils.Adapter {
                  return 'mixed';
          }
      }
@@ -134,6 +210,60 @@ index b47f4c5..31f9450 100644
 +        }
 +        const parsed = Number(value);
 +        return Number.isFinite(parsed) ? parsed : undefined;
++    }
++
++    validateWriteRequest(id, rawValue) {
++        const prefix = `${this.namespace}.set.`;
++        if (!String(id).startsWith(prefix)) {
++            return { ok: false, code: 'NOT_A_SET_STATE' };
++        }
++
++        const name = String(id).slice(prefix.length);
++        const item =
++            this.config.datapoints?.sets?.[name] ||
++            Object.values(this.config.datapoints?.sets || {}).find(candidate => candidate.name === name);
++        if (!item) {
++            return { ok: false, code: 'UNKNOWN_SET_STATE' };
++        }
++
++        const policy = WRITE_POLICIES[item.command];
++        if (!policy) {
++            return { ok: false, code: 'COMMAND_NOT_WHITELISTED' };
++        }
++        if (String(item.address || '').toUpperCase() !== policy.address) {
++            return { ok: false, code: 'ADDRESS_POLICY_MISMATCH' };
++        }
++        if (typeof rawValue !== 'number' && typeof rawValue !== 'string') {
++            return { ok: false, code: 'VALUE_TYPE_NOT_SUPPORTED' };
++        }
++        if (rawValue === null || rawValue === undefined || (typeof rawValue === 'string' && rawValue.trim() === '')) {
++            return { ok: false, code: 'VALUE_REQUIRED' };
++        }
++
++        const value = Number(rawValue);
++        if (!Number.isInteger(value)) {
++            return { ok: false, code: 'INTEGER_REQUIRED' };
++        }
++        if (policy.allowedValues && !policy.allowedValues.includes(value)) {
++            return { ok: false, code: 'VALUE_NOT_WHITELISTED' };
++        }
++        if (policy.min !== undefined && (value < policy.min || value > policy.max)) {
++            return { ok: false, code: 'VALUE_OUTSIDE_SAFE_RANGE' };
++        }
++
++        const lastWrite = this.lastSetWrites.get(item.command);
++        if (lastWrite !== undefined && Date.now() - lastWrite < MIN_SET_INTERVAL_MS) {
++            return { ok: false, code: 'RATE_LIMITED' };
++        }
++
++        return {
++            ok: true,
++            code: 'WRITE_VALIDATED',
++            command: item.command,
++            name: item.name,
++            address: policy.address,
++            value,
++        };
 +    }
 +
 +    inferRole(name, unit, type) {
@@ -197,9 +327,9 @@ index b47f4c5..31f9450 100644
 +        return this.roundNumber(result, 3);
 +    }
      //###########################################################################################################
- 
+
      //######SET STATES###########################################################################################
-@@ -404,6 +568,56 @@ class Viessmann extends utils.Adapter {
+@@ -404,6 +676,59 @@ class Viessmann extends utils.Adapter {
              callback,
          );
      }
@@ -225,6 +355,9 @@ index b47f4c5..31f9450 100644
 +        }
 +
 +        const native = { command: item.command };
++        if (item.address) {
++            native.address = item.address;
++        }
 +        if (item.scale !== undefined) {
 +            native.scale = item.scale;
 +        }
@@ -254,9 +387,24 @@ index b47f4c5..31f9450 100644
 +        }
 +    }
      //###########################################################################################################
- 
+
      //######CONFIG STATES########################################################################################
-@@ -588,6 +802,10 @@ class Viessmann extends utils.Adapter {
+@@ -525,9 +850,11 @@ class Viessmann extends utils.Adapter {
+         const time = Date.now();
+
+         if (setcommands.length > 0) {
+-            const cmd = setcommands.shift();
+-            this.log.debug(`Set command: ${cmd}`);
+-            client.write(`${cmd}\n`);
++            activeSetCommand = setcommands.shift();
++            this.log.debug(
++                `Set command: ${activeSetCommand.command} ${activeSetCommand.value} (${activeSetCommand.address})`,
++            );
++            client.write(`${activeSetCommand.command} ${activeSetCommand.value}\n`);
+             wait = true;
+             return;
+         }
+@@ -588,6 +915,10 @@ class Viessmann extends utils.Adapter {
                  obj.command = this.config.datapoints.gets[i].command;
                  obj.description = this.config.datapoints.gets[i].description;
                  obj.polling = this.config.datapoints.gets[i].polling;
@@ -267,25 +415,53 @@ index b47f4c5..31f9450 100644
                  obj.lastpoll = 0;
                  toPoll[i] = obj;
              }
-@@ -681,7 +899,7 @@ class Viessmann extends utils.Adapter {
+@@ -675,13 +1006,14 @@ class Viessmann extends utils.Adapter {
+
+         toPoll = {};
+         setcommands = [];
++        activeSetCommand = null;
+
+         const answer = this.config.answer;
+
          let err_count = 0;
- 
+
          clearTimeout(timerReconnect);
 -        this.setAllObjects();
 +        await this.refreshAllObjects();
- 
+
          this.connectSystem();
- 
-@@ -707,7 +925,7 @@ class Viessmann extends utils.Adapter {
+
+@@ -707,7 +1039,7 @@ class Viessmann extends utils.Adapter {
              this.stepPolling();
          });
- 
+
 -        client.on('data', data => {
 +        client.on('data', async data => {
              data = String(data);
              const ok = /OK/;
              const fail = /ERR/;
-@@ -746,12 +964,15 @@ class Viessmann extends utils.Adapter {
+@@ -715,10 +1047,20 @@ class Viessmann extends utils.Adapter {
+
+             if (ok.test(data)) {
+                 this.log.debug('Send command okay!');
++                if (activeSetCommand) {
++                    const confirmed = activeSetCommand;
++                    activeSetCommand = null;
++                    this.setState(`set.${confirmed.name}`, confirmed.value, true, err => {
++                        if (err) {
++                            this.log.error(err);
++                        }
++                    });
++                }
+                 wait = false;
+                 this.stepPolling();
+             } else if (fail.test(data) && step !== 'heartbeat') {
+                 this.log.warn(`Vctrld send ERROR: ${data}`);
++                activeSetCommand = null;
+                 err_count++;
+                 if (err_count > 5 && this.config.errors) {
+                     this.setState('info.connection', false, true);
+@@ -746,12 +1088,15 @@ class Viessmann extends utils.Adapter {
                  }
                  try {
                      data = data.replace(/\n$/, '');
@@ -306,12 +482,12 @@ index b47f4c5..31f9450 100644
                                  this.log.error(err);
                              }
 diff --git a/main.test.js b/main.test.js
-index 55c09e8..4c0463a 100644
+index 55c09e8..dfe0118 100644
 --- a/main.test.js
 +++ b/main.test.js
-@@ -1,30 +1,204 @@
+@@ -1,30 +1,388 @@
  'use strict';
- 
+
 -/**
 - * This is a dummy TypeScript test file using chai and mocha
 - *
@@ -339,7 +515,7 @@ index 55c09e8..4c0463a 100644
 +const assert = require('node:assert/strict');
 +const { EventEmitter } = require('node:events');
 +const proxyquire = require('proxyquire').noCallThru();
- 
+
 +class FakeAdapter extends EventEmitter {
 +    constructor(options) {
 +        super();
@@ -367,8 +543,9 @@ index 55c09e8..4c0463a 100644
 +
 +const createAdapter = proxyquire('./main', {
 +    '@iobroker/adapter-core': { Adapter: FakeAdapter },
-+});
-+
+ });
+
+-// ... more test suites => describe
 +function makeAdapter(config = {}) {
 +    return createAdapter({ config });
 +}
@@ -448,6 +625,159 @@ index 55c09e8..4c0463a 100644
 +        assert.deepEqual(result.gets.StatusHeizstabSt1.states, { 0: 'Aus', 1: 'Ein' });
 +        assert.equal(result.gets.StatusHeizstabSt1.role, 'indicator');
 +    });
++
++    it('imports guarded SETADDR metadata including address, ranges and states', async () => {
++        const adapter = makeAdapter();
++        const xml = {
++            vito: {
++                devices: [{ device: [{ $: { ID: '204D', name: 'Vitocal 200-S', protocol: 'P300' } }] }],
++                commands: [
++                    {
++                        command: [
++                            {
++                                $: {
++                                    name: 'setRaumsollExternHK1',
++                                    iobrokerRole: 'level.temperature',
++                                    iobrokerUnit: '°C',
++                                    iobrokerMin: '18',
++                                    iobrokerMax: '24',
++                                },
++                                addr: ['A401'],
++                                unit: ['UTI'],
++                                description: ['Externer Raum-Sollwert'],
++                            },
++                            {
++                                $: {
++                                    name: 'setWWBetriebsartExtern',
++                                    iobrokerRole: 'level.mode',
++                                    iobrokerStates: '{"1":"Extern","255":"Intern"}',
++                                },
++                                addr: ['A3C2'],
++                                unit: ['RT'],
++                            },
++                        ],
++                    },
++                ],
++            },
++        };
++
++        const result = await adapter.getImportHumanReadable(
++            xml,
++            { UTI: { unit: '°C' }, RT: { unit: '' } },
++            { UTI: { type: 'uchar' }, RT: { type: 'uchar' } },
++        );
++
++        assert.deepEqual(result.sets.RaumsollExternHK1, {
++            name: 'RaumsollExternHK1',
++            unit: '°C',
++            description: 'Externer Raum-Sollwert',
++            polling: 'nicht möglich',
++            type: 'number',
++            command: 'setRaumsollExternHK1',
++            address: 'A401',
++            role: 'level.temperature',
++            min: 18,
++            max: 24,
++        });
++        assert.deepEqual(result.sets.WWBetriebsartExtern.states, { 1: 'Extern', 255: 'Intern' });
++        assert.equal(result.sets.WWBetriebsartExtern.address, 'A3C2');
++    });
++});
++
++describe('guarded SETADDR writes on adapter 1.7.4', () => {
++    const sets = {
++        BetriebsartExternHK1: {
++            name: 'BetriebsartExternHK1',
++            command: 'setBetriebsartExternHK1',
++            address: 'A400',
++        },
++        RaumsollExternHK1: {
++            name: 'RaumsollExternHK1',
++            command: 'setRaumsollExternHK1',
++            address: 'A401',
++        },
++        VorlaufsollExternHK1: {
++            name: 'VorlaufsollExternHK1',
++            command: 'setVorlaufsollExternHK1',
++            address: 'A403',
++        },
++        WWBetriebsartExtern: {
++            name: 'WWBetriebsartExtern',
++            command: 'setWWBetriebsartExtern',
++            address: 'A3C2',
++        },
++        WWSollExtern: {
++            name: 'WWSollExtern',
++            command: 'setWWSollExtern',
++            address: 'A3C0',
++        },
++    };
++
++    function adapterWithSets() {
++        return makeAdapter({ datapoints: { gets: {}, sets } });
++    }
++
++    it('allows only the intended runtime modes and reset values', () => {
++        const adapter = adapterWithSets();
++
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.BetriebsartExternHK1', 13).ok, true);
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.BetriebsartExternHK1', 255).ok, true);
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.BetriebsartExternHK1', 8).code,
++            'VALUE_NOT_WHITELISTED',
++        );
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.WWBetriebsartExtern', 1).ok, true);
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.WWBetriebsartExtern', 255).ok, true);
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.WWBetriebsartExtern', 6).code,
++            'VALUE_NOT_WHITELISTED',
++        );
++    });
++
++    it('enforces integer-only temperature ranges', () => {
++        const adapter = adapterWithSets();
++
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', 18).ok, true);
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', '20').ok, true);
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', 24).ok, true);
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', true).code,
++            'VALUE_TYPE_NOT_SUPPORTED',
++        );
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', 25).code,
++            'VALUE_OUTSIDE_SAFE_RANGE',
++        );
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.VorlaufsollExternHK1', 30.5).code,
++            'INTEGER_REQUIRED',
++        );
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.VorlaufsollExternHK1', 45).ok, true);
++        assert.equal(adapter.validateWriteRequest('viessmann.0.set.WWSollExtern', 50).ok, true);
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.WWSollExtern', 51).code,
++            'VALUE_OUTSIDE_SAFE_RANGE',
++        );
++    });
++
++    it('blocks unknown commands and XML address mismatches', () => {
++        const adapter = adapterWithSets();
++        adapter.config.datapoints.sets.Unsafe = {
++            name: 'Unsafe',
++            command: 'setAnything',
++            address: '2000',
++        };
++        adapter.config.datapoints.sets.RaumsollExternHK1.address = '2000';
++
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.Unsafe', 1).code,
++            'COMMAND_NOT_WHITELISTED',
++        );
++        assert.equal(
++            adapter.validateWriteRequest('viessmann.0.set.RaumsollExternHK1', 20).code,
++            'ADDRESS_POLICY_MISMATCH',
++        );
++    });
 +});
 +
 +describe('safe object refresh on adapter 1.7.4', () => {
@@ -493,9 +823,39 @@ index 55c09e8..4c0463a 100644
 +            write: false,
 +        });
 +    });
- });
- 
--// ... more test suites => describe
++
++    it('publishes a guarded write state with its exact technique address', async () => {
++        const adapter = makeAdapter({
++            states_only: false,
++            datapoints: {
++                gets: {},
++                sets: {
++                    WWSollExtern: {
++                        name: 'WWSollExtern',
++                        command: 'setWWSollExtern',
++                        address: 'A3C0',
++                        description: 'Externer WW-Sollwert',
++                        unit: '°C',
++                        type: 'number',
++                        role: 'level.temperature',
++                        min: 40,
++                        max: 50,
++                    },
++                },
++            },
++        });
++
++        await adapter.refreshAllObjects();
++
++        assert.equal(adapter.extendedObjects[0].id, 'set.WWSollExtern');
++        assert.equal(adapter.extendedObjects[0].object.common.write, true);
++        assert.equal(adapter.extendedObjects[0].object.common.min, 40);
++        assert.equal(adapter.extendedObjects[0].object.common.max, 50);
++        assert.equal(adapter.extendedObjects[0].object.native.command, 'setWWSollExtern');
++        assert.equal(adapter.extendedObjects[0].object.native.address, 'A3C0');
++    });
++});
++
 +describe('reply conversion on adapter 1.7.4', () => {
 +    it('preserves raw and string replies', async () => {
 +        const adapter = makeAdapter();

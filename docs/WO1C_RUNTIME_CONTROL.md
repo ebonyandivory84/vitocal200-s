@@ -117,8 +117,10 @@ Am 27. August 2026 bestätigte die reale WO1C `A400=255` und `A3C2=255` jeweils 
 unmittelbare Readback blieb `255`, Heizstab Stufe 1/2 blieb aus und die Verdichterleistung blieb
 `0 W`. Damit sind Telegrammformat, Geräteannahme und neutraler Rücksetzpfad für diese beiden Werte
 bestätigt. Nicht bestätigt sind die Aktivwerte `A400=13` und `A3C2=1`, Sollwertübergabe,
-Heartbeat-/Timeout-Verhalten und Persistenz. Die A-Set-Kommandos wurden nach dem Test automatisch
-wieder aus der produktiven XML entfernt.
+Heartbeat-/Timeout-Verhalten und Persistenz. Die A-Set-Kommandos wurden nach dem Test zunächst
+wieder entfernt und am 29. August 2026 auf ausdrücklichen Wunsch als eng begrenzte, noch
+ungetestete Runtime-Kandidaten in die produktive XML aufgenommen. Allein das Exponieren der States
+sendet noch kein Schreibtelegramm.
 
 Eine Adresse darf im `RuntimeWriteGuard` erst freigegeben werden, wenn folgende Evidenz erfasst ist:
 
@@ -129,22 +131,33 @@ Eine Adresse darf im `RuntimeWriteGuard` erst freigegeben werden, wenn folgende 
 - mindestens drei konsistente reale Lesezyklen oder eine eindeutige OpenV-/vcontrold-Quelldefinition,
 - plausibler Vergleich von `A406` und `A3C5` mit den angezeigten Sollwerten.
 
-## Warum der vorhandene ioBroker-Adapter keine sichere Write-Schicht ist
+## Geschützte Write-Schicht im ioBroker-Backport
 
-Auf dem Raspberry ist `iobroker.viessmann` Version 1.7.4 installiert. Der Adapter erzeugt aus jedem
-XML-Kommando mit Präfix `set` einen beschreibbaren State und stellt jede State-Änderung direkt als
-vcontrold-Kommando in seine Warteschlange. Eine adressbezogene Whitelist, Wertebereichsprüfung und
-`ack`-Filterung ist dort nicht vorhanden.
+Auf dem Raspberry ist `iobroker.viessmann` Version 1.7.4 installiert. Der ursprüngliche Adapter
+erzeugte aus jedem XML-Kommando mit Präfix `set` einen beschreibbaren State und stellte jede
+State-Änderung ungeprüft als vcontrold-Kommando in seine Warteschlange. Der lokale Backport wurde
+deshalb um eine fest kodierte Kommando-/Adress-Whitelist, Integer- und Wertebereichsprüfung,
+ein adressbezogenes Rate-Limit und einen `ack`-Filter erweitert. Ein XML-Eintrag allein kann damit
+keine beliebige neue Schreibadresse aktivieren.
 
-Auf ausdrücklichen Nutzerwunsch sind die beiden bereits vorhandenen Kompatibilitätsdefinitionen
-`setBetriebsart` (`B000`) und `setWWEinmal` (`B020`) wieder direkt exponiert. Sie sind eine eng
-begrenzte Ausnahme: nur `0/1/2` beziehungsweise `0/2`, nur manuell und niemals zyklisch. Der
-Adapter erzwingt diese Whitelist technisch nicht; falsche Werte müssen deshalb bereits am
-aufrufenden Datenpunkt vermieden werden. Die Befehle verwenden P300 `SETADDR` und nicht das
-separate EEPROM-Schreibkommando. Die Persistenz von `B000` bleibt trotzdem unbekannt.
+Die beiden vorhandenen Kompatibilitätsdefinitionen `setBetriebsart` (`B000`) und `setWWEinmal`
+(`B020`) bleiben auf `0/1/2` beziehungsweise `0/2` begrenzt. Die Befehle verwenden P300 `SETADDR`
+und nicht das separate EEPROM-Schreibkommando. Die Persistenz von `B000` bleibt trotzdem unbekannt.
 
-Neue A-Schreibpunkte dürfen nicht direkt durch diesen Adapter exponiert werden. Eine spätere
-Integration muss den `RuntimeWriteGuard` als einzige Schreibroute verwenden.
+Zusätzlich sind genau fünf externe A-Eingänge als beschreibbare States exponiert. Der Backport
+akzeptiert nur folgende Kombinationen:
+
+| State | Adresse | Adapterseitig erlaubte Werte |
+|---|---|---|
+| `set.BetriebsartExternHK1` | `A400` | `1`, `13`, `100`, `255` |
+| `set.RaumsollExternHK1` | `A401` | ganzzahlig `18..24 °C` |
+| `set.VorlaufsollExternHK1` | `A403` | ganzzahlig `20..45 °C` |
+| `set.WWBetriebsartExtern` | `A3C2` | `1`, `255` |
+| `set.WWSollExtern` | `A3C0` | ganzzahlig `40..50 °C` |
+
+Unbekannte Kommandos, abweichende XML-Adressen, Werte außerhalb dieser Grenzen, nicht ganzzahlige
+Werte und Wiederholungen innerhalb einer Sekunde werden verworfen. Erfolgreich von vcontrold mit
+`OK` bestätigte Writes werden im State mit `ack=true` quittiert und dadurch nicht erneut gesendet.
 
 ## RuntimeWriteGuard
 
@@ -167,9 +180,9 @@ Der Guard in `lib/runtime-write-guard.js` erzwingt:
 Adressen werden unabhängig von Feature-Flags blockiert. `enableExperimentalPlantManager` ist
 vorbereitet, hebt die Sperre für `A380` aber ausdrücklich nicht auf.
 
-## Geplante ioBroker-States
+## ioBroker-States
 
-Nach verifizierter Lesekodierung:
+Lesestates nach verifizierter Lesekodierung:
 
 - `viessmann.0.get.BetriebsartExternHK1`
 - `viessmann.0.get.BetriebsartExternHK2`
@@ -181,10 +194,9 @@ Nach verifizierter Lesekodierung:
 - `viessmann.0.get.WWSollExtern`
 - `viessmann.0.get.WWSollEffektiv`
 
-Neue Runtime-Schreibanforderungen sollen nicht als ungeschützte `viessmann.0.set.*`-States
-erscheinen, sondern über eine eigene Guard-Integration mit Diagnosezuständen laufen. Die beiden
-manuellen Kompatibilitäts-States `set.Betriebsart` und `set.WWEinmal` sind hiervon ausgenommen.
-Vorgesehen sind unter anderem:
+Die fünf Runtime-Kandidaten erscheinen bewusst als geschützte `viessmann.0.set.*`-States. Für eine
+spätere Automatik bleibt eine vollständige `RuntimeWriteGuard`-Integration mit Diagnosezuständen
+vorgesehen, unter anderem:
 
 - `info.runtimeControlAvailable`
 - `info.runtimeControlValidated`

@@ -14,13 +14,31 @@ Der bevorzugte Rückport
 - Text- und Rohantworten bleiben Strings und verlieren keine führenden Nullen oder nachfolgenden Bytes;
 - Energiebilanzen werden mit dem zur Anlage gehörenden Register `163F` dynamisch in kWh umgerechnet;
 - der XML-Neuimport übernimmt bestehende Pollingintervalle anhand von Kommando- oder State-Namen;
-- die bestehenden Schreibkommandos werden weder erweitert noch verändert.
+- die explizit freigegebenen SETADDR-Kommandos werden durch eine feste Kommando-/Adress-Whitelist, Werteprüfung, Rate-Limit und `ack`-Filter geschützt.
 
 Der Rückport ist exakt gegen den offiziellen Git-Tag `v1.7.4` erstellt und unter Node.js 20 getestet. Adapter 1.7.4 deklariert Node.js 20 oder neuer; Node 22 ist dafür nicht erforderlich. Falls auf dem ioBroker-Host noch Node 18 oder älter läuft, ist mindestens ein Update auf Node 20 nötig.
 
 Zusätzlich zum Quellpatch liegt mit `adapter-patches/iobroker.viessmann-1.7.4-vitocal-backport.tgz` ein fertig gepacktes Installationsartefakt vor. Seine SHA-256-Prüfsumme steht in `adapter-patches/SHA256SUMS`. Das Paket behält intern bewusst die Adapterversion 1.7.4 und ersetzt deshalb nur eine zuvor gesicherte Installation derselben Version.
 
 Der Patch für `ioBroker.viessmann` 2.0.5 bleibt als spätere Alternative unter `adapter-patches/ioBroker.viessmann-2.0.5-human-readable.patch` erhalten und benötigt Node.js 22 oder neuer.
+
+## Geschützte Runtime-Schreibkandidaten
+
+Folgende neuen Objekte werden unter `viessmann.0.set` angelegt und sind in ioBroker grundsätzlich
+beschreibbar. Das Anlegen oder der Adapterstart sendet noch keinen Wert:
+
+| ioBroker-State | Adresse | Erlaubte Werte |
+| --- | --- | --- |
+| `BetriebsartExternHK1` | `A400` | `1`, `13`, `100`, `255` |
+| `RaumsollExternHK1` | `A401` | ganzzahlig `18..24 °C` |
+| `VorlaufsollExternHK1` | `A403` | ganzzahlig `20..45 °C` |
+| `WWBetriebsartExtern` | `A3C2` | `1`, `255` |
+| `WWSollExtern` | `A3C0` | ganzzahlig `40..50 °C` |
+
+Der Adapter prüft zusätzlich, dass jedes Kommando exakt mit seiner erwarteten Technik-ID verbunden
+ist. Andere XML-SET-Kommandos erhalten dadurch keinen generischen Schreibweg. Alle fünf verwenden
+P300 `SETADDR`; ein EEPROM-Schreibmakro ist nicht aktiv. Die endgültige RAM-/Timeout-Einordnung
+bleibt trotzdem Gegenstand der getrennten Mehr-Punkte-Livetests.
 
 ## Die für Leistung und Heizstab entscheidenden States
 

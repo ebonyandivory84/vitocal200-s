@@ -890,22 +890,52 @@
          <description>Bedienung WW: Status einmalige Warmwasserbereitung (0=normal, 2=einmal WW)</description>
      </command>
      <!--
-       Bewusst wiederhergestellte manuelle Kompatibilitaetskommandos.
-       Der ioBroker-Adapter besitzt keine harte Werte-Whitelist: nur die in den
-       Beschreibungen genannten Werte verwenden und niemals zyklisch schreiben.
-       Diese beiden SETADDR-Kommandos sind keine Schedule-/EEPROM-Schreibbefehle.
+       Explizit freigegebene SETADDR-Kommandos. Der gepatchte ioBroker-Adapter
+       erzwingt fuer jedes Kommando eine feste Werte-Whitelist bzw. einen engen
+       ganzzahligen Wertebereich und ignoriert bestaetigte (ack=true) States.
+       Es existiert hier bewusst kein Schedule-/EEPROM-Schreibkommando.
      -->
-     <command name="setBetriebsart" protocmd="setaddr">
+     <command name="setBetriebsart" protocmd="setaddr" iobrokerRole="level.mode" iobrokerStates="{&quot;0&quot;:&quot;Abschaltbetrieb&quot;,&quot;1&quot;:&quot;Nur Warmwasser&quot;,&quot;2&quot;:&quot;Heizen und Warmwasser&quot;}">
          <addr>B000</addr>
          <len>1</len>
          <unit>BAS</unit>
          <description>Betriebsart manuell setzen: 0=Abschaltbetrieb, 1=nur Warmwasser, 2=Heizen und Warmwasser; Persistenz unbekannt</description>
      </command>
-     <command name="setWWEinmal" protocmd="setaddr">
+     <command name="setWWEinmal" protocmd="setaddr" iobrokerRole="button" iobrokerStates="{&quot;0&quot;:&quot;Normal/Abbrechen&quot;,&quot;2&quot;:&quot;Einmalige Warmwasserbereitung&quot;}">
          <addr>B020</addr>
          <len>1</len>
          <unit>WWO</unit>
          <description>Einmalige Warmwasserbereitung: nur 0=normal/abbrechen oder 2=starten</description>
+     </command>
+     <command name="setBetriebsartExternHK1" protocmd="setaddr" iobrokerRole="level.mode" iobrokerStates="{&quot;1&quot;:&quot;Heizen mit externem Raum-Sollwert&quot;,&quot;13&quot;:&quot;Reduziert/Economy mit externem Raum-Sollwert&quot;,&quot;100&quot;:&quot;Heizen mit externem Vorlauf-Sollwert&quot;,&quot;255&quot;:&quot;Interne Regelung&quot;}">
+         <addr>A400</addr>
+         <len>1</len>
+         <unit>RT</unit>
+         <description>Runtime-Kandidat externer HK1-Modus: nur 1, 13, 100 oder 255; 255 gibt an die interne Regelung zurueck; Heartbeat und Persistenz werden separat validiert</description>
+     </command>
+     <command name="setRaumsollExternHK1" protocmd="setaddr" iobrokerRole="level.temperature" iobrokerMin="18" iobrokerMax="24" iobrokerUnit="°C">
+         <addr>A401</addr>
+         <len>1</len>
+         <unit>UTI</unit>
+         <description>Runtime-Kandidat externer HK1-Raum-Sollwert: nur ganzzahlig 18 bis 24 Grad; wirkt mit A400=1 oder 13; Kodierung und Persistenz werden separat validiert</description>
+     </command>
+     <command name="setVorlaufsollExternHK1" protocmd="setaddr" iobrokerRole="level.temperature" iobrokerMin="20" iobrokerMax="45" iobrokerUnit="°C">
+         <addr>A403</addr>
+         <len>1</len>
+         <unit>UTI</unit>
+         <description>Experimenteller Runtime-Kandidat externer HK1-Vorlauf-Sollwert: nur ganzzahlig 20 bis 45 Grad; wirkt mit A400=100; Kodierung und Persistenz werden separat validiert</description>
+     </command>
+     <command name="setWWBetriebsartExtern" protocmd="setaddr" iobrokerRole="level.mode" iobrokerStates="{&quot;1&quot;:&quot;Warmwasser mit externem Sollwert&quot;,&quot;255&quot;:&quot;Interne Regelung&quot;}">
+         <addr>A3C2</addr>
+         <len>1</len>
+         <unit>RT</unit>
+         <description>Runtime-Kandidat externer Warmwassermodus: nur 1 oder 255; 255 gibt an die interne Regelung zurueck; Heartbeat, Heizstabeinfluss und Persistenz werden separat validiert</description>
+     </command>
+     <command name="setWWSollExtern" protocmd="setaddr" iobrokerRole="level.temperature" iobrokerMin="40" iobrokerMax="50" iobrokerUnit="°C">
+         <addr>A3C0</addr>
+         <len>1</len>
+         <unit>UTI</unit>
+         <description>Runtime-Kandidat externer Warmwasser-Sollwert: nur ganzzahlig 40 bis 50 Grad; wirkt mit A3C2=1; Kodierung, Heizstabeinfluss und Persistenz werden separat validiert</description>
      </command>
      <command name="getLeistungThermischHeizen" protocmd="getaddr">
          <addr>16A0</addr>

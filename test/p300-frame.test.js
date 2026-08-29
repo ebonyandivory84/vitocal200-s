@@ -11,6 +11,9 @@ test('encodes the source-verified one-byte P300 runtime frames', () => {
     assert.equal(toHex(encodeP300WriteFrame('A3C2', 255)), '41 06 00 02 A3 C2 01 FF 6D');
     assert.equal(toHex(encodeP300WriteFrame('A440', 255)), '41 06 00 02 A4 40 01 FF EC');
     assert.equal(toHex(encodeP300WriteFrame('A480', 255)), '41 06 00 02 A4 80 01 FF 2C');
+    assert.equal(toHex(encodeP300WriteFrame('A401', 20)), '41 06 00 02 A4 01 01 14 C2');
+    assert.equal(toHex(encodeP300WriteFrame('A403', 30)), '41 06 00 02 A4 03 01 1E CE');
+    assert.equal(toHex(encodeP300WriteFrame('A3C0', 45)), '41 06 00 02 A3 C0 01 2D 99');
 });
 
 test('encodes the restored manual compatibility commands', () => {
