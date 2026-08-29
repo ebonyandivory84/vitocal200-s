@@ -53,6 +53,7 @@ bleibt trotzdem Gegenstand der getrennten Mehr-Punkte-Livetests.
 | `StatusHeizstabSt1` | `0488` | 0/1 | Relais der ersten Heizstabstufe |
 | `StatusHeizstabSt2` | `0489` | 0/1 | Relais der zweiten Heizstabstufe |
 | `StatusWWNachheizung` | `048A` | 0/1 | Relais der elektrischen Warmwasser-Nachheizung |
+| `KonfigurierteLeistungHeizstab` | `7907` | W | konfigurierte maximale Heizstableistung: Rohwert 1/2/3 wird als 3000/6000/9000 W dargestellt; kein Liveverbrauch |
 | `StatusEVUSperreHeizstab` | `03C4` | 0/1 | Eingang der EVU-Sperre für den Heizwasser-Durchlauferhitzer |
 | `FreigabeElektroWW` | `6015` | 0/1 | konfigurierte Freigabe für elektrische Warmwasserbereitung |
 | `StrategieElektroWW` | `6040` | Zahl/Status | Regelstrategie für elektrische Warmwasser-Nachladung; Codierung firmwareabhängig |
@@ -88,6 +89,8 @@ Es lagen mehrere unterschiedliche Ursachen vor:
 4. `A38F` liefert ebenfalls zwei Bytes, aber Byte 0 verwendet 0,5-%-Schritte. `PHB0` rechnet deshalb `B0 / 2`; Byte 1 wird separat als Anlagenstatus ausgewertet. Die Adresse wurde am realen Gerät dreimal fehlerfrei gelesen. Die ebenfalls geprüften fremden Kandidaten `0400`, `0404` und `5525` lieferten dagegen reproduzierbar Fehlercode 1 und wurden nicht übernommen.
 5. Diagnosepuffer ohne numerische Einheit sind Byte-/Textfolgen. Der bisherige Adapter versuchte dennoch, einen Zahlenanfang zu extrahieren. Der Patch erhält die vollständige Antwort als String.
 6. `5030` und `5130` sind Konfigurations- beziehungsweise Nennwerte des Verdichters, keine aktuelle elektrische Leistungsaufnahme.
+7. `7907` wurde am realen Gerät viermal als `0x03` gelesen. Da gleichzeitig `0488`, `0489` und `1909` jeweils null meldeten, beschreibt die Adresse die konfigurierte maximale Heizstableistung von 9 kW und nicht die momentane Aufnahme.
+8. `5012` wurde viermal als `0x0F` gelesen und wird als read-only Verdichter-Betriebsartenfreigabe `Standardfreigabe` dargestellt. Der aktuelle Verdichterbetrieb wird weiterhin über die vorhandenen Relais-, Leistungs- und Modulationswerte bestimmt.
 
 Die vier neuen `...KWh`-States sind die menschenlesbaren Energiewerte. Die gleichnamigen States ohne `KWh` bleiben als Diagnose-Rohwerte vorhanden, werden im empfohlenen Pollingprofil aber nicht zyklisch gelesen.
 

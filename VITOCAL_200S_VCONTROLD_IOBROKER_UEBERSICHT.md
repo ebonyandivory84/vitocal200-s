@@ -1,6 +1,6 @@
 # Vitocal 200-S: vcontrold-, Optolink- und ioBroker-Gesamtdokumentation
 
-**Stand:** 29. August 2026  
+**Stand:** 29. August 2026
 **Anlage:** Viessmann Vitocal 200-S AWB-E-AC 201.D08, Vitotronic 200 Typ WO1C  
 **Geräte-/Steuerungs-ID:** `204D` (live bestätigt)  
 **Seriennummer:** `7745669904294110`, Baujahr 2019  
@@ -38,6 +38,8 @@ Ergänzendes Smart-Heating-Repository: `https://github.com/ebonyandivory84/Smart
 - Heizstaberkennung erfolgt über `0488`, `0489`, `048A` und ergänzend `1909` statt über den Hausgesamtverbrauch allein.
 - Mehrbyte-Adressen `B420` bis `B424` werden in Nutzwert und Sensorstatus getrennt.
 - `A38F` wurde dreimal live gelesen und als Anlagen-Istleistung in Prozent plus Anlagenstatus aufgenommen.
+- `7907` und `5012` wurden am 29. August 2026 in vier rein lesenden Durchläufen stabil als `0x03` beziehungsweise `0x0F` bestätigt und als stündliche read-only Konfigurationswerte aufgenommen. `B0D0=0x00` bleibt wegen der ungeklärten Doppelung zu `B020` nur ein Forschungskommando.
+- Die neuen ioBroker-States `KonfigurierteLeistungHeizstab=9000 W` und `FreigabeVerdichterBetriebsarten=15` (`Standardfreigabe`) wurden produktiv mit `write=false` und 3600 Sekunden Polling angelegt; die Deployment-Logprüfung ergab null SETADDR-Kommandos.
 - Die Kandidaten `0400`, `0404` und `5525` lieferten jeweils reproduzierbar Fehlercode 1 und wurden nicht übernommen.
 - `A400`, `A3C2`, `A440`, `A480` und `779C` wurden als Ein-Byte-Reads bestätigt.
 - Direkte Reads auf `A401`, `A403`, `A406`, `A3C0` und `A3C5` lieferten Fehlercode 4; diese werden deshalb nicht als funktionierende normale Lesestates ausgegeben.
@@ -45,9 +47,9 @@ Ergänzendes Smart-Heating-Repository: `https://github.com/ebonyandivory84/Smart
 - Der Adapter 1.7.4 wurde zurückportiert: Metadaten, Einheiten, Rollen, Zustände, String-Erhalt, Energiefaktoren und geschützte Writes sind lokal getestet und am 29. August 2026 produktiv deployt.
 - Der produktive XML-Neuimport erzeugte alle fünf neuen A-Set-Objekte mit `write=true`, korrekter Technik-ID, Rolle, Einheit und Min/Max beziehungsweise Zustandsliste. Die States selbst blieben ohne Wert, und im Adapterlog wurden dabei null SETADDR-Kommandos ausgelöst.
 - Der ergänzende A38F-Stand wurde im Commit `827023e` versioniert. Backup des damaligen Deployments: `/home/sebastian/vitocal-a38f-backup-20260829T170812`.
-- Vor dem produktiven Runtime-Write-XML-Deployment wurde `/etc/vcontrold/vito.xml.bak-20260829-guarded-set-predeploy` angelegt. Die produktive `vito.xml` und die Projektdatei besitzen beide SHA-256 `a6963aaa278cb0c71f529ebb1f80619241a3c4dd2fe523bbdbeecf8cdab5b858`.
+- Vor dem produktiven Runtime-Write-XML-Deployment wurde `/etc/vcontrold/vito.xml.bak-20260829-guarded-set-predeploy` angelegt. Vor diesem Community-Lesepunkt-Deployment wurden zusätzlich `/etc/vcontrold/vito.xml.bak-20260829-community-readtest` und `/etc/vcontrold/vito.xml.bak-20260829-community-readpoints-predeploy` angelegt. Die aktuelle produktive `vito.xml` und die Projektdatei besitzen beide SHA-256 `f1d7daa3e7a6d3b933687d038f721dab4acaa8e762a33f3685be9d311b3a0687`.
 
-Aktive XML-Bilanz: **184 get-Kommandos**, **7 set-Kommandos**, **10 Forschungs-/Hilfskommandos ohne normalen ioBroker-get/set-Namen**. Das empfohlene Pollingprofil enthält **96 Einträge**.
+Aktive XML-Bilanz: **186 get-Kommandos**, **7 set-Kommandos**, **11 Forschungs-/Hilfskommandos ohne normalen ioBroker-get/set-Namen**. Das empfohlene Pollingprofil enthält **98 Einträge**.
 
 ## 3. Sicherheitsmodell: kein EEPROM-Schreibweg
 
@@ -206,6 +208,8 @@ Jeder Kandidat wird einzeln getestet. Während eines Tests werden keine anderen 
 | `get.StatusHeizstabSt2` | `0489` | Relais Heizstab Stufe 2. |
 | `get.StatusWWNachheizung` | `048A` | Elektrische Warmwasser-Nachheizung aktiv. |
 | `get.LeistungHeizstab` | `1909` | Ergänzende 3-kW-Stufen-Schätzung; immer mit den Relais plausibilisieren. |
+| `get.KonfigurierteLeistungHeizstab` | `7907` | Konfigurierte maximale Heizstableistung in W; Rohwert 1/2/3 entspricht 3/6/9 kW. Kein Liveverbrauch. |
+| `get.FreigabeVerdichterBetriebsarten` | `5012` | Read-only Betriebsartenfreigabe des Verdichters; `15` bedeutet Standardfreigabe. Kein aktueller Verdichterstatus. |
 | `get.EnergieElektrischHeizenKWh` | `1660` + `163F` | Elektrische Verdichter-Energiebilanz Heizen, automatisch in kWh skaliert. |
 | `get.EnergieElektrischWWKWh` | `1670` + `163F` | Elektrische Verdichter-Energiebilanz Warmwasser, automatisch in kWh skaliert. |
 | `get.EnergieThermischHeizenKWh` | `1640` + `163F` | Thermische Energiebilanz Heizen in kWh. |
@@ -219,6 +223,8 @@ Jeder Kandidat wird einzeln getestet. Während eines Tests werden keine anderen 
 - `A38F`: Byte 0 enthält 0..200 in 0,5-%-Schritten; Byte 1 enthält Ein/Aus.
 - Meldungs- und Identifikationspuffer bleiben vollständige Strings, damit keine führenden Nullen oder Folgebytes verloren gehen.
 - `5030` und `5130` sind Nenn-/Konfigurationswerte und keine aktuelle Leistungsaufnahme.
+- `7907`: Rohwert 1/2/3 wird als 3000/6000/9000 W dargestellt. Der bestätigte Wert 3 bei ausgeschalteten Heizstabrelais beweist, dass dies die konfigurierte Maximalleistung und nicht die aktuelle Aufnahme ist.
+- `5012`: Rohwert `0x0F` wird numerisch als 15 und menschenlesbar als Standardfreigabe dargestellt; die Adresse ist strikt read-only.
 
 ## 8. Vollständiger aktiver `viessmann.0.get`-Katalog
 
@@ -238,6 +244,7 @@ Die State-ID bleibt stabil und technisch (CamelCase). Die Spalte „Erklärung�
 | `TempSekRLMittel2` | `16B4` | 2 | `Number` | °C | `value.temperature` | nicht im Profil | Statistik - Energiebilanz: mittlere sek.Temperatur RL2 (0..95) |
 | `PwrSollVerdichter` | `5030` | 1 | `Number` | % | `value` | 30 s | Konfiguration/Diagnose: Leistung Verdichterstufe 1; nicht mit aktueller elektrischer Aufnahme verwechseln |
 | `PwrSollVerdichter2` | `5130` | 1 | `Number` | % | `value` | 30 s | Konfiguration/Diagnose: Leistung Verdichterstufe 2; nicht mit aktueller elektrischer Aufnahme verwechseln |
+| `KonfigurierteLeistungHeizstab` | `7907` | 1 | `Number` | W | `value.power` | 3600 s | Service - Elektroheizung: konfigurierte maximale Heizstableistung beziehungsweise Zahl freigegebener 3-kW-Stufen; kein momentaner Verbrauch und strikt read-only Zustände: 3000=3 kW / Stufe 1; 6000=6 kW / Stufe 2; 9000=9 kW / Stufe 3. |
 | `LeistungThermischHeizen` | `16A0` | 4 | `Number` | W | `value.power` | 15 s | Aktuelle thermische Leistung Heizbetrieb in W |
 | `LeistungThermischWW` | `16A1` | 4 | `Number` | W | `value.power` | 15 s | Aktuelle thermische Leistung Warmwasserbereitung in W |
 | `LeistungElektrischVerdichter` | `16A4` | 4 | `Number` | W | `value.power` | 15 s | Aktuelle elektrische Leistungsaufnahme Verdichter in W |
@@ -332,6 +339,7 @@ Die State-ID bleibt stabil und technisch (CamelCase). Die Spalte „Erklärung�
 | `SpdKomp` | `1A54` | 1 | `Number` | Hz | `value.frequency` | 30 s | Diagnose - Verdichter: Kompressorfrequenz; Wert groesser 0 bedeutet Verdichter aktiv |
 | `LastVerdichter` | `1AC3` | 1 | `Number` | — | `value` | 30 s | Last am Verdichter |
 | `TempSekVLMax` | `5001` | 2 | `Number` | °C | `value.temperature` | nicht im Profil | Service - Verdichter 1: maximale sekundaere Vorlauftemperatur |
+| `FreigabeVerdichterBetriebsarten` | `5012` | 1 | `Number` | — | `indicator` | 3600 s | Service - Verdichter: konfigurierte Betriebsartenfreigabe als Bitmaske; 15=Standardfreigabe, kein aktueller Verdichterstatus und strikt read-only Zustände: 1=Nur Warmwasser; 2=Nur Heizen; 3=Warmwasser und Heizen; 15=Standardfreigabe. |
 | `DrehzahlLuefterVerdichter` | `B420` | 2 | `Number` | % | `value` | 30 s | Primaerquelle/Luefter: Ansteuerung in Prozent; Nutzwert Byte 0, Sensorstatus Byte 1 |
 | `StellungExpansionsventilProzent` | `B424` | 2 | `Number` | % | `value` | 30 s | Elektronisches Expansionsventil: Oeffnung in Prozent; Nutzwert Byte 0, Sensorstatus Byte 1 |
 | `StatusSensorExpansionsventil` | `B424` | 2 | `Number` | — | `indicator.maintenance` | 300 s | Sensorstatus Expansionsventil: 0=OK, 1=Kurzschluss, 2=Unterbrechung, 3=Referenzfehler, 4=unter Min, 5=ueber Max, 6=nicht vorhanden, 7=Check, 8=Fehler, 9=Kommunikationsfehler Zustände: 0=OK; 1=Kurzschluss; 2=Unterbrechung; 3=Referenzfehler; 4=Unter Minimum; 5=Ueber Maximum; 6=Nicht vorhanden; 7=Pruefung; 8=Fehler; 9=Kommunikationsfehler. |
@@ -473,6 +481,7 @@ Diese Kommandos beginnen bewusst nicht mit `get` oder `set`. Der Adapter importi
 | `readRawA3C5Byte` | `A3C5` | 1 | `getaddr` | — | READ ONLY one-byte candidate for A3C5; encoding not yet confirmed |
 | `readRawReceiveHeartbeat779CByte` | `779C` | 1 | `getaddr` | — | READ ONLY first raw byte of LON receive heartbeat parameter |
 | `readRawReceiveHeartbeat779CWord` | `779C` | 2 | `getaddr` | — | READ ONLY two-byte comparison for LON receive heartbeat parameter |
+| `readRawWWEinmalB0D0Byte` | `B0D0` | 1 | `getaddr` | — | READ ONLY Community candidate for one-time domestic hot water request; compare with active B020 implementation |
 | `readScheduleRaw1570` | `1570` | 36 | `geteeprom` | `CO` | EEPROM-Zeitprogramm Testblock ab 0x1570, ausschliesslich lesend |
 
 ## 10. Verworfen, unbestätigt oder bewusst gesperrt
@@ -485,6 +494,7 @@ Diese Kommandos beginnen bewusst nicht mit `get` oder `set`. Der Adapter importi
 | `A401`, `A403`, `A406`, `A3C0`, `A3C5` | direkte Reads jeweils Fehlercode 4 | Keine normalen get-States; Schreibkandidaten nur mit kontrollierter Wirkungsprüfung. |
 | `A380`, `A382`, `A383` | zentrale Anlagenmanager-Eingänge mit hoher Eingriffspriorität | Immer für Writes gesperrt. |
 | `779C` | Receive-Heartbeat-Konfiguration, gelesen als 20 Minuten | Strikt read-only; nicht ändern. |
+| `B0D0` | viermal erfolgreich als `0x00` gelesen | Nicht als normaler State übernommen: mögliche alternative 1x-WW-Adresse, aber kein belegter Mehrwert gegenüber dem funktionierenden `B020`; bleibt read-only Forschungskommando. |
 | Zeitprogramme / Schedule-Bereiche | möglicherweise persistent | Nur lesen; EEPROM-Write verboten. |
 
 ## 11. Adapter-Backport und Artefakte

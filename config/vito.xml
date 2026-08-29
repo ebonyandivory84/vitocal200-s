@@ -787,6 +787,12 @@
          <unit>UT</unit>
          <description>Service - Verdichter 1: maximale sekundaere Vorlauftemperatur</description>
      </command>
+     <command name="getFreigabeVerdichterBetriebsarten" protocmd="getaddr" iobrokerRole="indicator" iobrokerStates="{&quot;1&quot;:&quot;Nur Warmwasser&quot;,&quot;2&quot;:&quot;Nur Heizen&quot;,&quot;3&quot;:&quot;Warmwasser und Heizen&quot;,&quot;15&quot;:&quot;Standardfreigabe&quot;}">
+         <addr>5012</addr>
+         <len>1</len>
+         <unit>RT</unit>
+         <description>Service - Verdichter: konfigurierte Betriebsartenfreigabe als Bitmaske; 15=Standardfreigabe, kein aktueller Verdichterstatus und strikt read-only</description>
+     </command>
      <command name="getPwrSollVerdichter" protocmd="getaddr">
          <addr>5030</addr>
          <len>1</len>
@@ -858,6 +864,12 @@
          <len>1</len>
          <unit>RT</unit>
          <description>Service - Elektroheizung: Heizwasser-Durchlauferhitzer fuer Raumheizung freigegeben</description>
+     </command>
+     <command name="getKonfigurierteLeistungHeizstab" protocmd="getaddr" iobrokerRole="value.power" iobrokerMin="3000" iobrokerMax="9000" iobrokerStates="{&quot;3000&quot;:&quot;3 kW / Stufe 1&quot;,&quot;6000&quot;:&quot;6 kW / Stufe 2&quot;,&quot;9000&quot;:&quot;9 kW / Stufe 3&quot;}">
+         <addr>7907</addr>
+         <len>1</len>
+         <unit>PW3K</unit>
+         <description>Service - Elektroheizung: konfigurierte maximale Heizstableistung beziehungsweise Zahl freigegebener 3-kW-Stufen; kein momentaner Verbrauch und strikt read-only</description>
      </command>
      <command name="getKKLNiveau" protocmd="getaddr">
          <addr>7110</addr>
@@ -1205,6 +1217,11 @@
          <addr>779C</addr>
          <len>2</len>
          <description>READ ONLY two-byte comparison for LON receive heartbeat parameter</description>
+     </command>
+     <command name="readRawWWEinmalB0D0Byte" protocmd="getaddr">
+         <addr>B0D0</addr>
+         <len>1</len>
+         <description>READ ONLY Community candidate for one-time domestic hot water request; compare with active B020 implementation</description>
      </command>
      <command name="readScheduleRaw1570" protocmd="geteeprom">
          <addr>1570</addr>

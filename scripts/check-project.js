@@ -223,6 +223,14 @@ expectCommand('getLeistungHeizstab', {
     elements: { addr: '1909', len: '1', unit: 'PW3K' },
     attributes: { iobrokerRole: 'value.power' },
 });
+expectCommand('getKonfigurierteLeistungHeizstab', {
+    elements: { addr: '7907', len: '1', unit: 'PW3K' },
+    attributes: { iobrokerRole: 'value.power' },
+});
+expectCommand('getFreigabeVerdichterBetriebsarten', {
+    elements: { addr: '5012', len: '1', unit: 'RT' },
+    attributes: { iobrokerRole: 'indicator' },
+});
 
 for (const [suffix, addr] of [
     ['DrehzahlLuefterVerdichter', 'B420'],
@@ -309,6 +317,14 @@ for (const rawEnergyState of [
 for (const heaterState of ['LeistungHeizstab', 'StatusHeizstabSt1', 'StatusHeizstabSt2']) {
     if (!(polling[heaterState] >= 5 && polling[heaterState] <= 15)) {
         fail(`${heaterState} must be polled every 5 to 15 seconds`);
+    }
+}
+for (const configurationState of [
+    'KonfigurierteLeistungHeizstab',
+    'FreigabeVerdichterBetriebsarten',
+]) {
+    if (polling[configurationState] !== 3600) {
+        fail(`${configurationState} must be polled hourly because it is a read-only configuration value`);
     }
 }
 for (const rawState of [
