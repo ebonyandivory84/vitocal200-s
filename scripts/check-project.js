@@ -155,6 +155,14 @@ for (const [suffix, addr] of [
     expectCommand(`get${suffix}`, { elements: { addr, len: '2', unit: 'PSB0' } });
 }
 expectCommand('getLeistungVerdichterRaw', { elements: { addr: 'B423', len: '2', unit: 'PSB0' } });
+expectCommand('getAnlagenIstleistungProzent', {
+    elements: { addr: 'A38F', len: '2', unit: 'PHB0' },
+    attributes: { iobrokerRole: 'value' },
+});
+expectCommand('getStatusAnlagenIstleistung', {
+    elements: { addr: 'A38F', len: '2', unit: 'SSB1' },
+    attributes: { iobrokerRole: 'indicator' },
+});
 expectCommand('getStellungExpansionsventilRaw', { elements: { addr: 'B424', len: '2', unit: 'PSB0' } });
 
 const requiredUnits = {
@@ -163,6 +171,7 @@ const requiredUnits = {
     CS: ["<calc get='V/3600'", '<entity>h</entity>'],
     PW3K: ["<calc get='V*3000'", '<entity>W</entity>'],
     PSB0: ["<calc get='B0'", '<type>ushort</type>'],
+    PHB0: ["<calc get='B0/2'", '<entity>%</entity>'],
     SSB1: ["<calc get='B1'", '<type>ushort</type>'],
 };
 for (const [abbrev, fragments] of Object.entries(requiredUnits)) {

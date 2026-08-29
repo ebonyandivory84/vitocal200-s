@@ -111,6 +111,12 @@
 	   <type>ushort</type>
 	   <entity>%</entity>
 	</unit>
+	<unit name='Halbprozent aus Byte 0 mit Status im Folgebyte'>
+	   <abbrev>PHB0</abbrev>
+	   <calc get='B0/2' set='V*2'/>
+	   <type>ushort</type>
+	   <entity>%</entity>
+	</unit>
 	<unit name='Sensorstatus aus Folgebyte'>
 	   <abbrev>SSB1</abbrev>
 	   <calc get='B1' set='V'/>

@@ -32,6 +32,8 @@
   "LeistungThermischHeizen": 15,
   "LeistungThermischWW": 15,
   "LeistungElektrischVerdichter": 15,
+  "AnlagenIstleistungProzent": 15,
+  "StatusAnlagenIstleistung": 15,
 
   "SpdFanOut": 30,
   "SpdFan": 30,

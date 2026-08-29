@@ -1,6 +1,6 @@
 # Maximale lesende Auswertung der Vitocal 200-S (WO1C / 204D)
 
-Stand: 28. August 2026
+Stand: 29. August 2026
 
 ## Ergebnis
 
@@ -29,6 +29,8 @@ Der Patch für `ioBroker.viessmann` 2.0.5 bleibt als spätere Alternative unter 
 | `LeistungElektrischVerdichter` | `16A4` | W | von der Regelung berechnete momentane elektrische Verdichterleistung |
 | `LeistungThermischHeizen` | `16A0` | W | momentan abgegebene thermische Leistung im Heizbetrieb |
 | `LeistungThermischWW` | `16A1` | W | momentan abgegebene thermische Leistung bei Warmwasserbereitung |
+| `AnlagenIstleistungProzent` | `A38F`, Byte 0 | % | zentrale Anlagen-Istleistung; Rohwert 0..200 wird in 0,5-%-Schritten dekodiert |
+| `StatusAnlagenIstleistung` | `A38F`, Byte 1 | 0/1 | Status der zentralen Anlagen-Istleistung: Anlage aus/ein |
 | `LeistungHeizstab` | `1909` | W | Community-Adresse, 3-kW-Stufen; mit den Relaiszuständen plausibilisieren |
 | `StatusHeizstabSt1` | `0488` | 0/1 | Relais der ersten Heizstabstufe |
 | `StatusHeizstabSt2` | `0489` | 0/1 | Relais der zweiten Heizstabstufe |
@@ -65,8 +67,9 @@ Es lagen mehrere unterschiedliche Ursachen vor:
 
 2. Laufzeitregister speichern Sekunden. Die neue Einheit `CS` rechnet sie mit `V / 3600` in Stunden um.
 3. `B420` bis `B424` liefern zwei Bytes. Byte 0 ist der Prozentwert, Byte 1 der Sensorstatus. Die Einheiten `PSB0` und `SSB1` trennen beide Informationen.
-4. Diagnosepuffer ohne numerische Einheit sind Byte-/Textfolgen. Der bisherige Adapter versuchte dennoch, einen Zahlenanfang zu extrahieren. Der Patch erhält die vollständige Antwort als String.
-5. `5030` und `5130` sind Konfigurations- beziehungsweise Nennwerte des Verdichters, keine aktuelle elektrische Leistungsaufnahme.
+4. `A38F` liefert ebenfalls zwei Bytes, aber Byte 0 verwendet 0,5-%-Schritte. `PHB0` rechnet deshalb `B0 / 2`; Byte 1 wird separat als Anlagenstatus ausgewertet. Die Adresse wurde am realen Gerät dreimal fehlerfrei gelesen. Die ebenfalls geprüften fremden Kandidaten `0400`, `0404` und `5525` lieferten dagegen reproduzierbar Fehlercode 1 und wurden nicht übernommen.
+5. Diagnosepuffer ohne numerische Einheit sind Byte-/Textfolgen. Der bisherige Adapter versuchte dennoch, einen Zahlenanfang zu extrahieren. Der Patch erhält die vollständige Antwort als String.
+6. `5030` und `5130` sind Konfigurations- beziehungsweise Nennwerte des Verdichters, keine aktuelle elektrische Leistungsaufnahme.
 
 Die vier neuen `...KWh`-States sind die menschenlesbaren Energiewerte. Die gleichnamigen States ohne `KWh` bleiben als Diagnose-Rohwerte vorhanden, werden im empfohlenen Pollingprofil aber nicht zyklisch gelesen.
 

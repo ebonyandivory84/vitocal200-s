@@ -1050,6 +1050,18 @@
          <unit>PSB0</unit>
          <description>Verdichtermodulation in Prozent; Nutzwert Byte 0, Sensorstatus Byte 1</description>
      </command>
+     <command name="getAnlagenIstleistungProzent" protocmd="getaddr" iobrokerRole="value" iobrokerMin="0" iobrokerMax="100">
+         <addr>A38F</addr>
+         <len>2</len>
+         <unit>PHB0</unit>
+         <description>Zentraler Anforderungsmanager: aktuelle Anlagen-Istleistung in 0,5-Prozent-Schritten; nicht mit Verdichtermodulation B423 verwechseln</description>
+     </command>
+     <command name="getStatusAnlagenIstleistung" protocmd="getaddr" iobrokerRole="indicator" iobrokerStates="{&quot;0&quot;:&quot;Anlage aus&quot;,&quot;1&quot;:&quot;Anlage ein&quot;}">
+         <addr>A38F</addr>
+         <len>2</len>
+         <unit>SSB1</unit>
+         <description>Zentraler Anforderungsmanager: Byte 1 Status der Anlagen-Istleistung, 0=aus und 1=ein</description>
+     </command>
      <command name="getStellungExpansionsventilRaw" protocmd="getaddr" iobrokerName="StellungExpansionsventilProzent" iobrokerRole="value" iobrokerMin="0" iobrokerMax="100">
          <addr>B424</addr>
          <len>2</len>
