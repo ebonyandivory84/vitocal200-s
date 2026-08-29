@@ -1,0 +1,1561 @@
+VIESMANN                                                             VITOGATE 300
+                                                    Anwendungshinweise für verschiedene Wärmeerzeuger
+
+
+
+
+Datenblatt
+Best.-Nr. und Preise: siehe Preisliste
+
+
+
+
+VITOGATE 300                Typ BN/MB
+
+Anwendungshinweise für verschiedene Wärmeerzeuger
+
+
+
+
+5799740 DE    5/2021
+Beschreibung der Funktionsobjekte – Allgemeines
+
+Hinweise zur Projektierung
+Aktivierung der Datenpunkte                                           ■ Zentrale Funktionen Regelung
+Die Beschreibung der Funktionsobjekte der Viessmann Regelungen        ■ Kaskade Heizkessel 1
+erläutert im Detail die Bedeutung und Funktion der einzelnen Daten-   ■ Kaskade Heizkessel 2
+punkte.                                                               ■ Kaskade Heizkessel 3
+Vitogate 300 zeigt alle Datenpunkte der Regelungen an, die generell   ■ Kaskade Heizkessel 4
+unterstützt werden können. Bei der Aktivierung der Datenpunkte        ■ Kaskade Heizkessel 5
+darauf achten, dass nur die Datenpunkte genutzt werden, die bei der   ■ Kaskade Heizkessel 6
+aktuellen Regelungskonfiguration verfügbar sind und in der betreff-   ■ Kaskade Heizkessel 7
+enden Anlage tatsächlich genutzt werden.                              ■ Kaskade Heizkessel 8
+
+Übersicht der Datenpunktgruppen für Datenpunkte in dieser Anlei-      Datenpunktnamen
+tung:                                                                 Datenpunkte mit der Kennzeichnung „Bestand:“ vor dem Daten-
+■ Funktionen Heizkessel                                               punktnamen in neu aufgesetzten Anlagen nicht verwenden. Diese
+■ Funktionen Heizkreis A1/M1/HK1                                      Datenpunkte sollen nur noch in Bestandsanlagen verwendet wer-
+■ Funktionen Heizkreis M2/HK2                                         den.
+■ Funktionen Heizkreis M3/HK3                                         Datenpunktnamen sind im Vitogate 300 manchmal mehrfach verge-
+■ Funktionen Warmwasser                                               ben. Die technische Unterscheidung ist im Datenpunkttyp erkennbar.
+■ Relaiszustände                                                      Die funktionale Unterscheidung wird in der Datenpunktbeschreibung
+■ Regelungsinformationen                                              deutlich.
+■ Feuerungsregelung
+
+Beispiel:
+Datenpunktname              Technik-ID    Status (Range)              Beschreibung
+Verdichter                  0x0480        – 0: AUS                    Status des Verdichters
+                                          – 1: EIN
+Verdichter                  0xB443        – 0: AUS                    Status des Verdichters:
+                                          – 1: EIN                    – Bei 2-stufigen Wärmepumpen für die 1. Stufe
+                                                                      – Bei Wärmepumpen mit 2-stufigem Kältekreis für Verdichter 1
+
+                                                                      Anzeige des Soll- oder Istwerts, abhängig vom eingebauten Typ des
+                                                                      Verdichters.
+
+Sollwertvorgaben                                                      Wärmepumpen
+Um Probleme mit der Skalierung von Werten zu verhindern, müssen       Da sich das Verhalten der Wärmepumpen (Vitocal) durch den erwei-
+Sollwerte immer in 1-K-Schritten oder 1-%-Schritten vorgegeben        terten Funktionsumfang (z. B. Kühlfunktionen) stark von dem der
+werden. Nur ganzzahlige Werte eintragen.                              anderen Wärmeerzeuger unterscheidet, erfolgt die Beschreibung in
+                                                                      separaten Kapiteln im Anschluss an die allgemeine Objektbeschrei-
+Effektive Sollwerte                                                   bung.
+Aufgrund verschiedener Einflussfaktoren, z. B. externe und interne
+Sollwertvorgaben und Regelungsroutinen, können deutliche Abwei-
+chungen vom geschriebenen Sollwert auftreten.
+
+Receive-Heart-Beat-Zeit
+■ Heart-Beat-Zeit ist das Empfangsintervall für die über LON gesen-
+  deten Werte und Meldungen. Falls für eine Größe oder Meldung
+  innerhalb dieser Zykluszeit kein Signal empfangen wird, setzt die
+  Regelung diesen Wert oder Status solange auf eine interne Vor-
+  einstellung, bis der entsprechende Wert wieder empfangen wird.
+■ Die „Receive-Heart-Beat-Zeit“ ist in den Kesselregelungen als
+  Codieradresse „9C“ in Minuten einstellbar.
+  Bei Wärmepumpen: Parameter „779C Intervall für Datenübertra-
+  gung über LON“.
+  Auslieferungszustand: 20 min
+  Es ist sinnvoll, die Codieradresse im Auslieferungszustand zu
+  belassen.
+■ Vitogate schreibt alle schreibbaren Datenpunkte 0xAnnn jede
+  Minute am LON.
+
+
+
+
+                                                                                                                                           5799740
+
+2     VIESMANN                                                                                                       VITOGATE 300
+          Beschreibung der Funktionsobjekte – Heizkreisregler
+
+          Allgemein
+
+                                                                         Heizkreisregler
+
+                                 Betriebsart - bei externer
+          HK-Betriebsmodus
+                                 Vorgabe HKx
+
+                                                                           Heizkreis x
+          Raumtemperatur-        Externe Raumsolltempe-                                              Effektive Raumsolltempe-     Effektiver Raum-
+                                                                        (x = Heizkreis 1, 2
+          Sollwert               ratur HKx                                                           ratur HKx                    temperatur-Sollwert
+                                                                              oder 3)
+
+          Vorlauftemperatur-     Externe Vorlaufsolltempe-
+          Sollwert               ratur HKx
+
+
+
+
+          Das Objekt „Heizkreisregler“ bietet die Schnittstelle der Heizungsre-    Hinweis
+          gelung zur Einzelraumregelung. Für jede in der Regelung enthaltene       Der Datenpunkt „A380“ muss auf 0xFF stehen (Auslieferungszu-
+          Heizkreisregelung stellt das Kommunikationsmodul ein Funktionsob-        stand).
+          jekt dieser Art zur Verfügung.
+          In der Regelung können Heizkreise über die Codieradresse „00“
+          deaktiviert sein. Dann ist das jeweilige Funktionsobjekt außer Funk-
+          tion.
+
+          Eingangs-Datenpunkte des Objekts „Heizkreisregler“:
+          Datenpunktname        Technik-ID                                 Default-Wert        Beschreibung
+                                HK1        HK2        HK3
+          Betriebsart - bei ex- 0xA400     0xA440     0xA480               0xFF                Heizkreis-Betriebsmodus: Legt fest, wie auf den Heiz-
+          terner Vorgabe HKx                                               (= HVAC_AUTO)       kreis eingewirkt werden soll. Beschreibung siehe unten.
+                                                                                               Falls während der „ReceiveHeartBeat-Zeit“ kein Tele-
+                                                                                               gramm empfangen wird, wird der Default-Wert verwen-
+                                                                                               det.
+          Externe Raumsoll-      0xA401        0xA441         0xA481       20 °C               Raumtemperatur-Sollwert: Wirkt nur, wenn „Betriebsart
+          temperatur HKx                                                                       - bei externer Vorgabe HKx“ auf HVAC_HEAT steht.
+                                                                                               Falls während der „Receive-Heart-Beat-Zeit“ kein
+                                                                                               Raumtemperatur-Sollwert empfangen wird, wird der
+                                                                                               Default-Wert verwendet.
+          Externe Vorlaufsoll-   0xA403        0xA443         0xA483       20 °C               Vorlauftemperatur-Sollwert: Wirkt nur, wenn „Betriebs-
+          temperatur HKx                                                                       art - bei externer Vorgabe HKx“ auf
+                                                                                               HVAC_FLOW_TEMP steht. Falls während der „Recei-
+                                                                                               ve-Heart-Beat-Zeit“ kein Vorlauftemperatur-Sollwert
+                                                                                               empfangen wird, obwohl „Betriebsart - bei externer Vor-
+                                                                                               gabe HKx“ noch mit HVAC_FLOW_TEMP empfangen
+                                                                                               wird, wird der Default-Wert verwendet.
+
+          Der Datenpunkt „Betriebsart - bei externer Vorgabe HKx“ des Objekts „Heizkreisregler“ hat folgende Wirkung:
+          Wert      Bezeichnung                 Beschreibung
+          0         HVAC_AUTO                   Die Heizkreisregelung arbeitet nach der internen Einstellung der Regelung. Die Datenpunkte „Exter-
+          0xFF      (Default-Wert)              ne Raumsolltemperatur HKx“ und „Externe Vorlaufsolltemperatur HKx“ sind ohne Funktion. Dieser
+                                                Zustand ist der Default-Zustand. Der Default-Zustand wird ebenfalls verwendet, falls während der
+                                                „Receive-Heart-Beat-Zeit“ kein Telegramm für „Betriebsart - bei externer Vorgabe HKx“ empfangen
+                                                wurde.
+          1         HVAC_HEAT                   Die Heizkreisregelung arbeitet nach Heizkennlinie und verwendet „Externe Raumsolltemperatur
+                                                HKx“ als Raumtemperatur-Sollwert, d. h. Betriebsartenschalter, Schaltuhr und Raumtemperatur-Soll-
+                                                wert des Heizkreises sind außer Kraft. Frostschutz und Sparfunktionen (z. B. automatische Sommer-
+                                                abschaltung) können wirksam werden.
+                                                Der Datenpunkt „Externe Vorlaufsolltemperatur HKx“ ist ohne Funktion.
+          2         HVAC_MRNG_WRM_UP Die Heizkreisregelung arbeitet nach Heizkennlinie und verwendet den reduzierten Raumtemperatur-
+                                                Sollwert der Regelung, d. h. Betriebsartenschalter und Schaltuhr des Heizkreises sind außer Kraft.
+                                                Frostschutz und Sparfunktionen (z. B. automatische Sommerabschaltung) können wirksam werden.
+                                                Die Datenpunkte „Externe Raumsolltemperatur HKx“ und „Externe Vorlaufsolltemperatur HKx“ sind
+                                                ohne Funktion.
+          (3)       HVAC_OFF                    Die Heizkreisregelung ist ausgeschaltet und wird nur bei Frostschutz (Frostgrenze über Codier-
+          (4)                                   adresse einstellbar) mit dem reduzierten Raumtemperatur-Sollwert aktiv.
+          (5)                                   Die Datenpunkte „Externe Raumsolltemperatur HKx“ und „Externe Vorlaufsolltemperatur HKx“ sind
+          6                                     ohne Funktion.
+          7         HVAC_TEST                   Die Heizkreisregelung arbeitet nach Heizkennlinie und verwendet den normalen Raumtemperatur-
+
+5799740
+                                                Sollwert der Regelung,
+
+
+
+          VITOGATE 300                                                                                                          VIESMANN            3
+Beschreibung der Funktionsobjekte – Heizkreisregler (Fortsetzung)
+
+Wert         Bezeichnung                 Beschreibung
+8            HVAC_EMERG_HEAT             Die Heizkreisregelung arbeitet mit einem festen Vorlauftemperatur-Sollwert von 20 °C, d. h. Heiz-
+                                         kennlinie, Betriebsartenschalter, Schaltuhr, Frotschutz und Sparfunktionen sind außer Kraft.
+                                         Die Datenpunkte „Externe Raumsolltemperatur HKx“ und „Externe Vorlaufsolltemperatur HKx“ sind
+                                         ohne Funktion.
+100          HVAC_FLOW_TEMP              Die Heizkreisregelung arbeitet mit einem Vorlauftemperatur-Sollwert nach „Externe Vorlaufsolltempe-
+                                         ratur HKx“, d. h. Heizkennlinie, Betriebsartenschalter, Schaltuhr, Frostschutz und Sparfunktionen
+                                         sind außer Kraft. Die Codieradresse „Vorlauftemperatur-Maximalbegrenzung“ ist weiter aktiv.
+                                         Der Datenpunkt „Externe Raumsolltemperatur HKx“ ist ohne Funktion.
+
+Ausgangs-Datenpunkte des Objekts „Heizkreisregler“:
+Datenpunktname                Technik-ID                         Beschreibung
+                    HK1       HK2          HK3
+Effektive Raumsoll- 0xA406    0xA446       0xA486                Effektiver Raumtemperatur-Sollwert: Gibt den momentan wirksamen Raum-
+temperatur HKx                                                   temperatur-Sollwert aus.
+
+
+Umsetzung des Datenpunkts „Betriebsart - bei externer Vorgabe HKx“ bei Wärmepumpen
+Falls für einen Heizkreis eine Vorgabe über LON („Betriebsart - bei
+externer Vorgabe HKx“ ungleich HVAC_NUL) erfolgt, dann sind alle
+internen Anforderungen für diesen Heizkreis ausgeschaltet. Falls ein
+Pufferspeicher konfiguriert ist, werden die Heizkreisanforderungen
+an den Pufferspeicher weiteregeleitet. Dies gilt nur für Heizanforde-
+rungen. Kühlanforderungen wirken nicht auf den Pufferspeicher. Bei
+Gleitanlagen (ohne Puffer) gilt im Heizbetrieb die Rücklauftempera-
+turregelung, d. h. der Rücklauftemperatur-Sollwert (Vorlauftempera-
+tur-Sollwert – 5 K) wird verwendet. Im Kühlbetrieb gilt die Vorlauf-
+temperaturregelung.
+
+LON                                                                              Interne Abbildung
+„Betriebsart - bei externer     Betriebsart        Betriebsmo-          Bedarf             Raumtempera-    Vorlauftempe-     Auswertung in-
+Vorgabe HKx“                                       dus                                     tur-Sollwert    ratur-Sollwert    terne Anforde-
+                                                                                                                             rung
+HVAC_NUL                        „Non LON“          Auto                 Keiner           nicht vorhanden   nicht vorhanden   Ja
+HVAC_ECONOMY                    Reduziert          Auto                 Gering           Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_AUTO                       Normal             Auto                 Mittel           Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_TEST                       Normal             Auto                 Keiner           nicht vorhan-     nicht vorhanden   Nein
+                                                                                         den*1
+HVAC_MRNG_WARMUP                Reduziert          Heat                 Gering           nicht vorhan-     nicht vorhanden   Nein
+                                                                                         den*2
+HVAC_HEAT                       Normal             Heat                 Mittel           Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_MAX_HEAT                   Normal             Heat                 Hoch             Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_FREE_COOL                  Normal             Cool                 Minimal          Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_COOL                       Normal             Cool                 Mittel           Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_DEHUMID                    Normal             Cool                 Hoch             Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_EMERG_COOL                 Normal             Cool                 Maximal          Raumtempera-      nicht vorhanden   Nein
+                                                                                         tur-Sollwert
+HVAC_FLOW_TEMP                  Festwert           Heat                 Mittel           nicht vorhanden   Vorlauftempera-   Nein
+(Viessmann spezifisch)                                                                                     tur-Sollwert
+HVAC_EMERG_HEAT                 Festwert           Heat                 Maximal          nicht vorhanden   20 °C             Nein
+HVAC_OFF                        Standby            Auto                 Keiner           nicht vorhanden   nicht vorhanden   Nein
+Alle weiteren                                                                     wie HVAC_OFF
+
+
+
+
+                                                                                                                                               5799740
+*1   Parameter „Normaler Raumtemperatur-Sollwert“
+*2   Parameter „Reduzierter Raumtemperatur-Sollwert“
+
+4      VIESMANN                                                                                                             VITOGATE 300
+          Beschreibung der Funktionsobjekte – Heizkreisregler (Fortsetzung)
+
+          Wert   Bezeichnung              Beschreibung
+          255    HVAC_NUL                 Nur die internen Heizkreisanforderungen werden verarbeitet.
+          13     HVAC_ECONOMY             Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert, d. h.
+                                          Betriebsartenschalter, Schaltuhr und Einstellung Raumtemperatur-Sollwert des Heizkreises sind au-
+                                          ßer Funktion. Frostschutz und Sparfunktionen (z. B. automatische Sommerabschaltung) können
+                                          wirksam werden.
+                                          Der Datenpunkt „Externe Vorlauftemperatur HKx“ ist ohne Funktion.
+                                          Die Vorlauftemperaturberechnung erfolgt weiterhin je nach Einstellung des Heizkreises nach Heiz-
+                                          kennlinie, Raumtemperaturaufschaltung oder Raumtemperaturregelung. Es wird keine Zusatzhei-
+                                          zung angefordert. Für den Heizkreis erfolgt nur Heizbetrieb. Kühlanforderungen werden nicht umge-
+                                          setzt. Es gibt keinen Zugriff auf den separaten Kühlkreis.
+          0      HVAC_AUTO                Die Sollwertbestimmung für Raumtemperatur und Vorlauftemperatur ist wie bei HVAC_ECONOMY,
+                                          allerdings kann eine Zusatzheizung zuschalten. Falls die Kühlperiode aktiv ist und die Kühleinschalt-
+                                          bedingungen erfüllt sind, wird die Kühlanforderung gestellt. Kühlen startet mit Natural cooling (bei
+                                          Typ BW). Active Cooling schaltet verzögert zu.
+          7      HVAC_TEST                Der Raumtemperatur-Sollwert ist der von der Regelung vorgegebene normale Raumtemperatur-Soll-
+                                          wert. Der Vorlauftemperatur-Sollwert berechnet sich entsprechend der Einstellung des Heizkreisreg-
+                                          lers. Kein Heizen und Kühlen möglich.
+          2      HVAC_MRNG_WARMUP         Der Raumtemperatur-Sollwert ist der von der Regelung vorgegebene reduzierte Raumtemperatur-
+                                          Sollwert. Der Vorlauftemperatur-Sollwert berechnet sich entsprechend der Einstellungen des Heiz-
+                                          kreisreglers. Heizen ohne Zusatzheizung. Nur Heizbetrieb. Kein Kühlen möglich.
+          1      HVAC_HEAT                Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Der Vor-
+                                          lauftemperatur-Sollwert berechnet sich aus der Einstellung des Heizkreisreglers. Nur Heizbetrieb.
+                                          Kein Kühlen möglich. Die Zusatzheizung schaltet verzögert zu, falls erforderlich.
+          12     HVAC_MAX_HEAT            Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Der Vor-
+                                          lauftemperatur-Sollwert berechnet sich aus der Einstellung des Heizkreisreglers. Nur Heizbetrieb.
+                                          Kein Kühlen möglich. Zusatzheizung schaltet sofort zu.
+          10     HVAC_FREE_COOL           Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Die Be-
+                                          rechnung des Vorlauftemperatur-Sollwerts erfolgt weiterhin je nach Einstellung des Heizkreises nach
+                                          Kühlkennlinie, Raumtemperaturaufschaltung oder Raumtemperturregelung. Kühlen nur mit Umwälz-
+                                          pumpe der Sekundärseite (Primärkreis bleibt aus).
+          3      HVAC_COOL                Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Die Be-
+                                          rechnung des Vorlauftemperatur-Sollwerts erfolgt nach der Einstellung des Heizkreises. Kühlen star-
+                                          tet mit Natural cooling (bei Typ BW). Active cooling schaltet verzögert zu.
+          14     HVAC_DEHUMID             Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Die Be-
+                                          rechnung des Vorlauftemperatur-Sollwerts erfolgt nach der Einstellung des Heizkreises. Kühlen star-
+                                          tet sofort mit Acive cooling.
+          16     HVAC_EMERG_COOL          Der Heizkreis verwendet „Externe Raumsolltemperatur HKx“ als Raumtemperatur-Sollwert. Die Be-
+                                          rechnung des Vorlauftemperatur-Sollwerts erfolgt nach der Einstellung des Heizkreises. Kühlen star-
+                                          tet sofort mit Active cooling, auch falls die Einschaltbedingungen nicht erfüllt sind.
+          100    HVAC_FLOW_TEMP           Die Heizkreisregelung arbeitet mit einem Vorlauftemperatur-Sollwert nach „Externe Vorlaufsolltempe-
+                 (Viessmann spezifisch)   ratur HKx“, d. h. Heizkennlinie, Betriebsartenschalter, Schaltuhr, Frostschutz und Sparfunktionen
+                                          sind außer Kraft. Die Codieradresse „Vorlauftemperatur-Maximalbegrenzung“ ist weiter aktiv. Der
+                                          Datenpunkt „Externe Raumsolltemperatur HKx“ ist ohne Funktion. Heizen mit verzögerter Zuschal-
+                                          tung der Zusatzheizung, falls erforderlich. Kein Kühlen.
+          8      HVAC_EMERG_HEAT          Die Heizkreisregelung arbeitet mit einem Vorlauftemperatur-Sollwert von 20 °C. Der Datenpunkt „Ex-
+                                          terne Raumsolltemperatur HKx“ ist ohne Funktion. Heizen mit sofortigem Zuschalten der Zusatzhei-
+                                          zung, auch falls die Einschaltbedingungen nicht erfüllt sind. Kein Kühlen.
+          6      HVAC_OFF                 Die Heizkreisregelung ist ausgeschaltet und wird nur bei Frostschutz (Frostgrenze über Codier-
+                                          adresse einstellbar) mit dem reduzierten Raumtemperatur-Sollwert aktiv. Die Datenpunkte „Externe
+                                          Raumsolltemperatur HKx“ und „Externe Vorlaufsolltemperatur“ sind ohne Funktion.
+                 alle weiteren            Wie HVAC_OFF
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                                                  VIESMANN             5
+Beschreibung der Funktionsobjekte – Warmwasserregler
+
+Allgemein
+
+                                                          Warmwasserregler
+
+                                                                                         Siehe Tabelle „Die Aus-
+Warmwasser-Be-       Betriebsmodus - Warm-                                                                          Warmwassertempe-
+                                                                                         gangs-Datenpunkte der
+triebsmodus          wasser                                                                                         ratur-Istwert
+                                                                                         Warmwasserregelung“
+
+                                                                                                                    Effektiver Warm-
+Warmwassertempe- Warmwasser-Solltempe-                                                   Effektive Warmwasser-
+                                                                                                                    wassertemperatur-
+ratur-Sollwert   ratur                                                                   Solltemperatur
+                                                                                                                    Sollwert
+
+
+
+
+Das Objekt „Warmwassertemperaturregelung“ bietet die Möglichkeit,
+die Warmwasserbereitung der Heizungsanalge zu beeinflussen. Die
+Warmwasserregelung in der Regelung kann über die Codieradresse
+„00“ deaktiviert sein. Dann ist dieses Funktionsobjekt außer Funk-
+tion.
+
+Die Eingangs-Datenpunkte der Warmwasserregelung
+Datenpunktname           Technik-ID Beschreibung
+Warmwasser-Solltempera- 0xA3C0      Der Warmwassertemperatur-Sollwert wird verwendet, falls „Betriebsmodus - Warmwasser“ =
+tur                                 HVAC_HEAT
+Betriebsmodus - Warm-    0xA3C2     Betriebsmodus Warmwasser: Beschreibung siehe unten.
+wasser                              Falls während der „Receive-Heart-Beat-Zeit“ kein Telegramm empfangen wird, wird der Default-
+                                    Wert 0xFF (= HVAC_AUTO) verwendet.
+
+Der Datenpunkt „Betriebsmodus - Warmwasser“ hat folgende Wirkung:
+Wert      Bezeichnung             Beschreibung
+0         HVAC_AUTO               Die Warmwasserregelung und die Zirkulationspumpe arbeiten nach der internen Einstellung an der
+0xFF      (Default-Wert)          Regelung. Der Datenpunkt „Warmwasser-Solltemperatur“ ist ohne Funktion. Dieser Zustand ist der
+                                  Default-Zustand. Der Default-Zustand wird ebenfalls verwendet, falls während der „Receive-Heart-
+                                  Beat-Zeit“ kein Telegramm für „Betriebsmodus - Warmwasser“ empfangen wurde.
+1         HVAC_HEAT               Die Warmwasserregelung arbeitet und verwendet „Warmwasser-Solltemperatur“ als Warmwasser-
+                                  temperatur-Sollwert, d. h. Betriebsartenschalter, Schaltuhr und Warmwassertemperatur-Sollwert sind
+                                  außer Kraft. Die Zirkulationspumpe ist bei Codierung „64:1“ und „64:2“ eingeschaltet und bei Codie-
+                                  rung „64:0“ ausgeschaltet.
+(3)       HVAC_OFF                Die Warmwasserregelung ist ausgeschaltet und wird nur bei Frostschutz aktiv (Frostgrenze = Spei-
+(4)                               chertemperatur-Istwert 10 °C). Der Datenpunkt „Warmwasser-Solltemperatur“ ist ohne Funktion. Die
+(5)                               Zirkulationspumpe ist ausgeschaltet.
+6
+
+Die Ausgangs-Datenpunkte der Warmwasserregelung
+Datenpunktname                                     Technik-ID        Beschreibung
+Gas-Wandgeräte             Temperatur Speicher La- 0x0812            Aktueller Warmwassertemperatur-Istwert in °C
+                           desensor Komfortsensor
+                           Auslauftemperatur       0x0814
+Vitotronic 100, Typ CC1E   Speichertemperatur 5A   0x7480
+und CC1I                   Speichertemperatur 5B   0x7480
+Vitotronic 200, Typ CO1E
+und CO1I
+Vitotronic 300, Typ CM1E
+und CM1I
+Mittel- und Großkessel (1. Warmwassertemperatur    0x0812
+Auswahl)                   (STS1)
+                           Warmwassertemperatur    0x0814
+                           (STS2)
+Mittel- und Großkessel (2. Speichertemperatur 5A   0x0812
+Auswahl)                   Speichertemperatur 5B   0x0814
+Wärmepumpen                WW Tempeatur Oben       0x01CD
+                           WW Temperatur Unten     0x01CE
+Vitotronic 300, Typ MW3B Temperatur Speicher       0x0814
+Vitotronic 200, Typ FO1    Speichertemperatur      0x0814
+
+
+
+
+                                                                                                                                        5799740
+
+6     VIESMANN                                                                                                      VITOGATE 300
+          Beschreibung der Funktionsobjekte – Warmwasserregler (Fortsetzung)
+
+          Umsetzung des Datenpunkts „Betriebsmodus - Warmwasser“ bei Wärmepumpen
+          Eine Warmwasseranforderung über LON mit einem „Betriebsmodus            Zusätzlich kann von den externen HKs eine Anforderung erfolgen.
+          - Warmwasser“ ungleich HVAC_NUL und HVAC_AUTO überschreibt              Diese wird wie eine interne Anforderung behandelt und hiermit ver-
+          die internen Warmwasseranforderungen. Bei HCAC_NUL und                  odert.
+          HVAC_AUTO sind nur die internen Anforderungen aktiv. Der Bedarf
+          wird intern in den Methoden bestimmt.
+
+          LON                                                                           Interne Abbildung
+          „Betriebsmodus - Warmwas-           Betriebsart         Betriebsmodus         Bedarf            Warmwassertem-           Auswertung inter-
+          ser“                                                                                            peratur-Sollwert         ne WW-Anforde-
+                                                                                                                                   rung und externe
+                                                                                                                                   HKs
+          HVAC_NUL                            „Non LON“           Auto                  —                   Nicht vorhanden        Ja
+          HVAC_AUTO                           „Non LON“           Auto                  —                   Nicht vorhanden        Ja
+          HVAC_MRNG_WRMUP                                                               wie HVAC_AUTO
+          HVAC_HEAT                           Festwert            Heat                  —                   Warmwassertem-         Nein
+                                                                                                            peratur-Sollwert
+          HVAC_OFF                            Standby             Auto                  —                   Nicht vorhanden        Nein
+          Alle weiteren                                                                  wie HVAC_OFF
+
+          Wert        Bezeichnung                 Beschreibung
+          255         HVAC_NUL                    Es gilt nur die interne Warmwasseranforderung.
+          0           HVAC_AUTO                   Es gilt nur die interne Warmwasseranforderung.
+          2           HVAC_MRNG_WRMUP             Es gilt nur die interne Warmwasseranforderung.
+          1           HVAC_HEAT                   Die Warmwasserregelung verwendet „Warmwasser-Solltemperatur“ als Warmwassertemperatur-
+                                                  Sollwert, d. h. Betriebsartenschalter, Schaltuhr und Warmwassertemperatur-Sollwert sind außer
+                                                  Kraft. Die interne Warmwasseranforderung wird überschrieben, d. h. falls „Warmwasser-Solltempera-
+                                                  tur“ kleiner ist als der interne Warmwassertemperatur-Sollwert, wird trotzdem der erstere verwendet.
+                                                  Bei 2 Speichertemperatursensoren wird über den unteren Speichertemperatursensor abgeschaltet.
+                                                  Falls erforderlich, wird eine Zusatzheizung als Unterstützung zugeschaltet.
+          6           HVAC_OFF                    Die Warmwasserregelung ist ausgeschaltet und wird nur bei Frostschutz aktiv (Frostgrenze = Spei-
+                                                  chertemperatur-Istwert 10 °C). Der Datenpunkt „Warmwasser-Solltemperatur“ ist ohne Funktion. Die
+                                                  Zirkulationspumpe ist weiter aktiv. Die Solarkreispumpe ist freigegeben bis der Speichertemperatur-
+                                                  Istwert den max. Speichertemperatur-Sollwert erreicht hat.
+                      Alle weiteren               Wie HVAC_OFF
+
+
+
+          Beschreibung der Funktionsobjekte – Zentraler Anforderungsmanager
+
+          Allgemein
+
+                                                                      Zentraler Anforde-
+                                                                       rungsmanager
+
+                                Anlagen-/Kessel-Sollleis-                                            Anlagen-Istleistung - Sta-
+                                tung - Status                                                        tus
+          Anlagen-Soll-Leis-                                                                                                       Anlagen-Istleistung
+          tung
+                                Anlagen-/Kessel-Sollleis-                                            Anlagen-Istleistung - Wert
+                                tung - Wert
+                                                                     Schnittstelle zu ex-
+                                                                     ternen Systemen
+                                Betriebsmodus Anlage/                                                Anlagenvorlauf-Kessel-        Anlagen-Vorlauf-
+          Betriebsmodus
+                                Kessel                                                               Isttemperatur                 temperatur-Istwert
+
+                                                                                                                                   Effektiver Anlagen-
+          Anlagen-Vorlauf-      Vorlauf-Solltemperatur                                               Aktiver Anlagen-/Solltem-
+                                                                                                                                   Vorlauftemperatur-
+          temperatur-Sollwert   Anlage/Kessel                                                        peraturwert
+                                                                                                                                   Sollwert
+
+
+
+
+          Das Objekt „Zentraler Anforderungsmanager“ sammelt die Anforde-         Über die anderen Eingangs-Datenpunkte können übergeordnete
+          rungen der Wärmeverbraucher im Netzwerk und nimmt eine Maxi-            Systeme (z. B. Gebäudeleitsysteme, Klima, Lüftung) die Wärmepro-
+          malwertbildung der hereinkommenden Temperaturanforderungen              duktion beeinflussen. Sie können zusätzliche Temperatur- oder Leis-
+          vor (Anforderungen der Viessmann Heizkreisregelungen).                  tungsanforderungen stellen oder auch die Wärmeproduktion kom-
+
+
+5799740
+                                                                                  plett abschalten.
+
+
+
+          VITOGATE 300                                                                                                            VIESMANN              7
+Beschreibung der Funktionsobjekte – Zentraler Anforderungsmanager (Fortsetzung)
+
+Das Funktionsobjekt berechnet aus dem Maximalwert der Anforde-            Außerdem gibt der Zentrale Anforderungsmanager die Signale zur
+rungen der externen Wärmeverbraucher, den anderen Eingangs-               Leistungsreduzierung oder zur zwangsweisen Wärmeabnahme an
+Datenpunkten und den internen Anforderungen der Regelung selbst           die Verbraucher in einer Anlage weiter. Die Daten von den internen
+(in der Regelung enthaltene Heizkreisregelungen oder andere Anfor-        Heizkreisen bezüglich der zentralen Heizkreisbedienung und die
+derungen, z. B. über digitale Eingänge) die resultierende Anforde-        Daten der internen Speicherregelung bezüglich dem Status der
+rung an die Wärmeproduktion.                                              Speicherbeheizung werden ebenfalls an die externen Verbraucher
+                                                                          weitergegeben.
+
+Die Eingangs-Datenpunkte des Zentralen Anforderungsmanagers
+Datenpunktname              Technik-ID Beschreibung
+Anlagen-/Kessel-Sollleis-   0xA380     Anlagen- oder Kessel-Soll-Leistung:
+tung - Status                          – Byte [0] Wert:
+                                         0 bis 200 in 0,5-%-Schritten (200 = 100 %) Mindestleistung in % der Kessel-/Anlagen-Nennleis-
+Nicht bei:                               tung, 0 = Default-Wert
+– Vitotronic 300-K und                 – Byte [1] Status:
+  Vitotronic 333, Typ MW...              0 = Kessel/Anlage aus
+– Vitotronic 300, Typ                    1 = Kessel/Anlage ein
+  GW6... und CM1...                      0xFF = auto = Default-Wert
+Anlagen-/Kessel-Sollleis-              Diese Eingangsvariable hat Priorität vor allen anderen Befehlen/Anforderungen, d. h. wenn z. B.
+tung - Wert                            Status = 0, dann wird der Heizkessel bzw. die Anlage ausgeschaltet. Andere Anforderungen wer-
+                                       den nicht berücksichtigt.
+Betriebsmodus Anlage/       0xA382     Betriebsmodus der Anlage, siehe folgende Tabelle.
+Kessel
+Vorlauf-Solltemperatur An- 0xA383      Vorlauftemperatur-Sollwert
+lage/Kessel                            Die Anlage ist wahlweise über Temperatur oder Leistung steuerbar. Das Leistungskommando hat
+                                       Priorität (siehe oben).
+                                       Default-Wert = 0 °C
+
+Der Datenpunkt „Anlagen-/Kessel-Sollleistung - Status“ hat höchste        Falls über „Anlagen-/Kessel-Sollleistung - Status“ keine Vorgabe
+Priorität. Über ihn kann eine Leistungsvorgabe an die Anlage gege-        gemacht wird oder der Status = 0xFF ist, wirken die anderen Anfor-
+ben werden. Diese Vorgabe übersteuert alle anderen Anforderun-            derungen. Als nächstes wird „Betriebsmodus Anlage/Kessel“ ausge-
+gen. So wird z. B. bei Status = 0 die Wärmeproduktion ausgeschal-         wertet.
+tet, d. h. dieser Wert wirkt wie der digitale Eingang „Extern Sperren“,
+der bei einigen Regelungen vorhanden ist.
+Bei Status = 1 kann die Kessel-/Anlagenleistung über den Wert vor-
+gegeben werden. Bei Werten unterhalb der Leistung Grundstufe
+wird die Leistung Grundstufe gefahren usw.
+
+Der Datenpunkt „Betriebsmodus Anlage/Kessel“ hat folgende Wirkung:
+Wert      Bezeichnung             Beschreibung
+0         HVAC_AUTO               Die internen Anforderungen der Regelung (Heizkreisregelungen und digitale Eingänge), die Anforde-
+1         HVAC_HEAT               rungen externer Heizkreisregelungen und die Anforderungen über „Vorlauf-Solltemperatur Anlage/
+0xFF      (Default-Wert)          Kessel“ werden ausgewertet. Falls alle Anforderungen auf 0 °C gehen, wird ggf. weiter die Kessel-
+                                  mindesttemperatur gehalten.
+2         HVAC_MRNG_WRM_UP Die internen Anforderungen der Regelung (Heizkreisregelungen und digitale Eingänge), die Anforde-
+                                  rungen externer Heizkreisregelungen und die Anforderungen über „Vorlauf-Solltemperatur Anlage/
+                                  Kessel“ werden nicht berücksichtigt. Die Kesselmindesttemperatur wird gehalten.
+(3)       HVAC_OFF                Die Wärmeproduktion wird ausgeschaltet. Die internen Anforderungen der Regelung (Heizkreisrege-
+(4)                               lungen und digitale Eingänge), die Anforderungen externer Heizkreisregelungen und die Anforderun-
+(5)                               gen über „Vorlauf-Solltemperatur Anlage/Kessel“ werden nicht berücksichtigt. Keine Kesselmindest-
+6                                 temperatur.
+(9)
+7         HVAC_TEST               Die Wärmeproduktion arbeitet mit der Grundleistung des Heizkessels oder mit der Grundleistung des
+111       HVAC_LOW_FIRE           Führungskessels der Anlage. Die internen Anforderungen der Regelung (Heizkreisregelung und digi-
+                                  tale Eingänge), die Anforderungen externer Heizkreisregellungen und die Anforderungen über „Vor-
+                                  lauf-Solltemperatur Anlage/Kessel“ werden nicht berücksichtigt. Die Kesselmindesttemperatur und
+                                  die Kesselmaximaltemperatur sind aktiv.
+8         HVAC_EMERG_HEAT         Die Wärmeproduktion arbeitet mit der Nennleistung des Heizkessels oder mit der Gesamtleistung
+112       HVAC_HIGH_FIRE          des Führungskessels der Anlage. Die internen Anforderungen der Regelung (Heizkreisregelungen
+                                  und digitale Eingänge), die Anforderungen externen Heizkreisregelungen und die Anforderungen
+                                  über „Vorlauf-Solltemperatur Anlage/Kessel“ werden nicht berücksichtigt. Die Kesselmindesttempe-
+                                  ratur und die Kesselmaximaltemperatur sind aktiv, d. h. bei Erreichen der elektronischen Kesselmaxi-
+                                  maltemperatur wird ggf. die Kesselleistung reduziert.
+
+
+
+
+                                                                                                                                               5799740
+
+8     VIESMANN                                                                                                            VITOGATE 300
+          Beschreibung der Funktionsobjekte – Zentraler Anforderungsmanager (Fortsetzung)
+
+          Die Ausgangs-Datenpunkte des Zentralen Anforderungsmanagers
+          Datenpunktname             Technik-ID Beschreibung
+          Anlagen-Istleistung - Sta- 0xA38F     Anlagen-Istleistung in % der Anlagen-Nennleistung:
+          tus                                   – Byte [0] Wert:
+          Anlagen-Istleistung - Wert              0 bis 200 in 0,5-%-Schritten (200 = 100 %)
+                                                  Mindestleistung in % der Kessel-/Anlagen-Nennleistung, 0 = Default-Wert
+                                                – Byte [1] Status:
+                                                  0 = Kessel/Anlage aus
+                                                  1 = Kessel/Anlage ein
+          Aktiver Anlagen-/Solltem-  0xA391     Aktiver Anlagentemperatur-/Kesseltemperatur-Sollwert in °C
+          peraturwert
+          Anlagenvorlauf-Kessel-Ist- 0xA393     Anlagenvorlauftemperatur-/Kesseltemperatur-Istwert in °C
+          temperatur
+
+
+          Umsetzung des Datenpunkts „Betriebsmodus Anlage/Kessel“ bei Wärmepumpen
+          Die Einkopplung erfolgt über den Zentralen Anforderungsmanager
+          der Wärmepumpe.
+
+          LON                                                                                Interne Abbildung
+          „Betriebsmodus Anlage/           Betriebsart        Betriebsmo-          Bedarf              Mindestleis-   Temperatur-       Auswertung
+          Kessel“                                             dus                                      tung           Sollwert          Anforderung
+                                                                                                                                        der internen
+                                                                                                                                        Heizkreisrege-
+                                                                                                                                        lungen
+          HVAC_NUL                         „Non LON“          Auto                 Keiner             0%              Nicht vorhan-     Ja
+                                                                                                                      den
+          HVAC_MRNG_WARMUP                                                                    Wie HVAC_NUL
+          HVAC_AUTO                        Festwert           Auto                 Mittel            0%               Vorlauftempera-   Ja
+                                                                                                                      tur-Sollwert
+          HVAC_ECONOMY                     Festwert           Auto                 Gering             0%              Vorlauftempera-   Ja
+                                                                                                                      tur-Sollwert
+          HVAC_LOW_FIRE                    Festwert           Heat                 Gering             0%              20 °C             Nein
+          (Viessmann spezifisch)
+          HVAC_TEST                                                                         Wie HVAC_LOW_FIRE
+          HVAC_HEAT                        Festwert           Heat                 Mittel             0%              Vorlauftempera-   Ja
+                                                                                                                      tur-Sollwert
+          HVAC_MAX_HEAT                    Festwert           Heat                 Hoch               100 %           Nicht vorhan-     Ja
+                                                                                                                      den
+          HVAC_HIGH_FIRE                   Festwert           Heat                 Hoch               0%              Parameter         Nein
+          (Viessmann spezifisch)                                                                                      „Max.Vorlauf
+                                                                                                                      WP“
+          HVAC_EMERG_HEAT                                                               Wie HVAC_HIGH_FIRE
+          HVAC_FREE_COOL                   Festwert           Cool                 Minimal        0%                  Vorlauftempera-   Ja
+                                                                                                                      tur-Sollwert
+          HVAC_COOL                        Festwert           Cool                 Mittel             0%              Vorlauftempera-   Ja
+                                                                                                                      tur-Sollwert
+          HVAC_DEHUMID                     Festwert           Cool                 Mittel             100 %           Nicht vorhan-     Ja
+                                                                                                                      den
+          HVAC_EMERG_COOL                  Festwert           Cool                 Maximal            100 %           Nicht vorhan-     Ja
+                                                                                                                      den
+          HVAC_OFF                         Standby            Off                  Keiner             0%              Nicht vorhan-     Nein
+                                                                                                                      den
+          Alle weiteren                                                                       wie HVAC_OFF
+
+          Neben dem „Betriebsmodus Anlage/Kessel“ geht auch die „Anla-
+          gen-/Kessel-Sollleistung - Status“ in die Betriebsartenermittlung ein.
+          Bei „Anlagen-/Kessel-Sollleistung - Status“ 0x00 ist das Verhalten
+          gleich „Betriebsmodus Anlage/Kessel“ HVAC_OFF.
+          Bei „Anlagen-/Kessel-Sollleistung - Status“ 0xFF gilt das Verhalten
+          gemäß Tabelle.
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                                                              VIESMANN             9
+Beschreibung der Funktionsobjekte – Zentraler Anforderungsmanager (Fortsetzung)
+
+Bei „Anlagen-/Kessel-Sollleistung - Status“ 0x01 wird abweichend         Falls der Zentrale Anforderungsmanager Teil eines Kaskadenmana-
+von der Tabelle die über „Anlagen-/Kessel-Sollleistung - Wert“ über-     gers ist, erfolgt bei Sollwertvorgabe ein Schalten der Folgewärme-
+gebene Mindestleistung verwendet. Abweichend vom Verhalten               pumpen in Abhängigkeit der Solltemperatur. Die Solltemperatur
+anderer Regelungen wirkt bei Vorgabe der Mindestleistung zusätz-         bezieht sich auf den gemeinsamen Vorlauf aller Wärmepumpen der
+lich der übergebene Temperatur-Sollwert. Damit kann ein sofortiges       Kaskade. Falls die Mindestleistung größer 0, ist wird in Abhängigkeit
+Einschalten des Verdichters mit vorgegebener Leistung erfolgen,          der Gesamtanzahl der Wärmepumpen in der Kaskade eine entspre-
+auch wenn die Einschaltbedingungen nicht erfüllt sind. Trotz Min-        chende Anzahl an Verdichtern zugeschaltet. Falls der Laufzeitaus-
+destleistungsvorgabe wirkt immer noch die Solltemperaturregelung.        gleich aktiv ist, kann auch eine Folgewärmepumpe als erstes einge-
+Der Verdichter kann seine Leistung somit auch über die Mindestleis-      schaltet werden, obwohl die Anforderung am Kaskadenmaster
+tung hinaus anheben, falls das zum Erreichen des Temperatur-Soll-        anliegt.
+werts erforderlich ist. Es erfolgt keine Modulation unterhalb der Min-   Falls der Zentrale Anforderungsmanager Teil einer Master-/Slave-
+desttemperatur. Falls die Abschalttemperatur erreicht wird, läuft der    Maschine ist, schaltet die Slave-Maschine bei einer Mindestleis-
+Verdichter mit Mindestleistung weiter, bis der max. Vorlauftempera-      tungsvorgabe von 100 % sofort zu, ansonsten zeitverzögert nach
+tur-Istwert des Verdichters erreicht ist. Als Ausschaltbedingungen       Zuschaltintegral. Falls ein Master-/Slave-Gerät eine Folgewärme-
+gelten nur noch die Kältekreisschutzgrenzen des Verdichters. Nur         pumpe und nicht der Kaskadenmaster ist und einen Mindestleistung
+bei einer Mindestleistung von 0 % gilt die reine Temperaturregelung      von 100 % auf die Kaskade wirkt, schalten nur alle Mastergeräte der
+und der Verdichter wird ausgeschaltet, wenn die gesetzte Ausschalt-      Kaskade sofort zu. Die Slave-Maschinen mit Ausnahme des Kaska-
+temperatur erreicht ist.                                                 denmasters schalten zeitverzögert über Zuschaltintegral zu.
+
+Wert        Bezeichnung                  Beschreibung
+255         HVAC_NUL                     Nur die internen Heiz- und Kühlanforderungen bzw. die Heizanforderungen eines externen Heizkrei-
+                                         ses werden angenommen. Externe Sollwertvorgaben wirken nicht.
+2           HVAC_MRNG_WARMUP             Wie HVAC_NUL
+0           HVAC_AUTO                    Gesamtvorlauf-Sollwertvorgabe über „Vorlauf-Solltemperatur Anlage/Kessel“ und Mindestsollwertvor-
+                                         gabe. Heizen, gegebenenfalls mit Zusatzheizung, die zeitverzögert zuschaltet. Kühlen mit Natural
+                                         cooling und zeitverzögert Active cooling auf Sollwert. Ob die Sollwertvorgabe umgesetzt wird, wird
+                                         maßgeblich durch die internen Anforderungen der Wärmepumpenregelung bestimmt.
+13          HVAC_ECONOMY                 Gesamtvorlauf-Sollwertvorgabe über „Vorlauf-Solltemperatur Anlage/Kessel“ und Mindestsollwertvor-
+                                         gabe. Heizen ohne Zusatzheizung. Kühlen nur mit Natual cooling. Ob die Sollwertvorgabe umgesetzt
+                                         wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenregelung bestimmt.
+111         HVAC_LOW_FIRE                Gesamtvorlauf-Sollwertvorgabe auf 20 °C und Mindestsollwertvorgabe. Heizen ohne Zusatzheizung.
+            (Viessmann spezifisch)       Kein Kühlen. Interne Anforderungen der Wärmepumpenregelung werden nicht berücksichtigt.
+7           HVAC_TEST                    Wie HVAC_LOW_FIRE
+1           HVAC_HEAT                    Gesamtvorlauf-Sollwertvorgabe über „Vorlauf-Solltemperatur Anlage/Kessel“ und Mindestsollwertvor-
+                                         gabe. Heizen, gegebenenfalls mit Zusatzheizung, die zeitverzögert zuschaltet. Kein Kühlen. Ob die
+                                         Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepum-
+                                         penregelung bestimmt.
+12          HVAC_MAX_HEAT                Heizen, gegebenenfalls mit Zusatzheizung, die sofort zuschaltet. Kein Kühlen. Ob die Sollwertvor-
+                                         gabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenrege-
+                                         lung bestimmt.
+112         HVAC_HIGH_FIRE               Gesamtvorlauf-Sollwertvorgabe ist die max. Vorlauftemperatur und Mindestsollwertvorgabe. Heizen,
+            (Viessmann spezifisch)       gegebenenfalls mit Zusatzheizung, die sofort zuschaltet. Kein Kühlen. Interne Anforderungen werden
+                                         nicht berücksichtigt.
+8           HVAC_EMERG_HEAT              Wie HVAC_HIGH_FIRE
+10          HVAC_FREE_COOL               Gesamtvorlauf-Sollwertvorgabe über „Vorlauf-Solltemperatur Anlage/Kessel“ und Mindestsollwertvor-
+                                         gabe. Kühlen nur mit Natural cooling. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich
+                                         durch die internen Anforderungen der Wärmepumpenregelung bestimmt.
+3           HVAC_COOL                    Gesamtvorlauf-Sollwertvorgabe über „Vorlauf-Solltemperatur Anlage/Kessel“ und Mindestsollwertvor-
+                                         gabe. Kühlen mit Natural cooling und zeitverzögert Active cooling auf Sollwert. Ob die Sollwertvor-
+                                         gabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenrege-
+                                         lung bestimmt.
+14          HVAC_DEHUMID                 Kühlen mit Acitve cooling sofort. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die
+                                         internen Anforderungen der Wärmepumpenregelung bestimmt.
+16          HVAC_EMERG_COOL              Kühlen mit Active cooling sofort, auch falls Active cooling nicht freigegeben ist. Ob die Sollwertvor-
+                                         gabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenrege-
+                                         lung bestimmt.
+6           HVAC_OFF                     Die internen Anforderungen der Regelung (interne und digitale Eingänge), die Anforderungen exter-
+                                         ner Heizkreisregelungen und die Anforderungen über die Vorlauf-Solltemperatur Anlage/Kessel wer-
+                                         den nicht berücksichtigt. Nur noch Frostschutz aktiv.
+            Alle weiteren                Wie HVAC_OFF
+
+
+
+
+                                                                                                                                                  5799740
+
+10     VIESMANN                                                                                                           VITOGATE 300
+          Beschreibung der Funktionsobjekte – Kesselregler
+
+          Allgemein
+
+                                                                           Kesselregler
+
+                                 Kesselsollleistung - Sta-
+                                                                                                       Modulationsgrad - Status
+                                 tus
+          Kessel-Soll-Leis-                                                                                                         Kessel-Istleistung
+          tung
+                                 Kesselsollleistung - Wert                                             Modulationsgrad - Wert
+
+                                                                                                       Effektive Kessellsolltem-    Effektiver Kessel-
+          Betriebsmodus          Betriebsart - Kessel
+                                                                                                       peratur                      temperatur-Sollwert
+
+          Kesseltemperatur-                                                                                                         Kesseltemperatur-
+                                 Kesselsolltemperatur                                                  Kesselltemperatur
+          Sollwert                                                                                                                  Istwert
+
+
+
+
+          Das Objekt „Kesselregler“ stellt die Schnittstelle der Kesselregelung    Die Kaskadenregelung kann je nach gewählter Regelstrategie vom
+          in einer Mehrkesselanlage dar (Codierung „01:2“). In einer Einkes-       Heizkessel eine Leistung in % der Kessel-Nennleistung, einen Kes-
+          selanlage (Codierung „01:1“) ist dieses Objekt nicht aktiv. In einer     seltemperatur-Sollwert oder beides fordern.
+          Einkesselanlage werden externe Anforderungen am Objekt „Zentra-
+          ler Anforderungsmanager“ gemeinsam mit den Anforderungen inter-
+          ner und externer Heizkreisregelungen verarbeitet.
+          In einer Mehrkesselanlage erfolgt über die 4 Eingangs-Datenpunkte
+          die Ansteuerung des Kesselreglers. In diesem Fall ist die Kesselre-
+          gelung ganz dem Kommando der Kaskadenregelung untergestellt.
+          Die internen Anforderungen der Regelung (Kesseltempertur-Sollwert
+          und Warmwasserbereitung einer Regelung für angehobenen
+          Betrieb, z. B. Vitotronic 100, Typ GC1 oder HC1A) sind außer Funk-
+          tion.
+
+          Die Eingangs-Datenpunkte des Kesselreglers
+          Datenpunktname            Technik-ID Beschreibung
+          Kesselsollleistung - Sta- 0xA300     Kessel-Soll-Leistung:
+          tus
+          Kesselsollleistung -                 Brennertyp                    Byte [0]:                Byte [1]:                 Brennerzustand
+          Wert                                                               Wert in 0,5-%-Schrit-    Status
+                                                                             ten
+                                                    1-stufig                 0=0%                     0 = AUS                   AUS
+                                                                             1 bis 200 = 100 %        1 = EIN                   EIN
+                                                    2-stufig                 Beliebig                 0 = AUS                   AUS
+                                                                             1 bis 100 = 50 %         1 = EIN                   Stufe 1
+                                                                             101 bis 200 = 100 %      1 = EIN                   Stufe 2
+                                                    Modulierend              0=0%                     0 = AUS                   AUS
+                                                                             1 bis 200 = 0,5 bis      1 = EIN                   MOD
+                                                                             100 %
+                                                    Alle Brenner             Beliebig                 0xFF = Default           nach „Betriebsart - Kes-
+                                                                                                                               sel“
+                                                    Dieser Datenpunkt hat Priorität vor allen anderen Befehlen/Anforderungen, d. h. wenn z. B. Status =
+                                                    0, dann wird der Heizkessel abgeschaltet, unabhängig vom Wert der anderen Eingangs-Daten-
+                                                    punkte.
+          Betriebsart - Kessel       0xA302         Betriebsmodus des Heizkessels: Siehe Beschreibung unten.
+          Kesselsolltemperatur       0xA303         Kesseltemperatur-Sollwert
+                                                    Der Heizkessel ist wahlweise über Temperatur oder Leistung steuerbar. Das Leistungskommando
+                                                    „Kesselsollleistung - Status“, siehe oben, hat Priorität.
+                                                    – Mittel-/Großkessel:
+                                                      Default-Wert = 127 °C
+                                                      Der Heizkessel fährt auf Maximalwert, wenn keine Werte mehr empfangen werden.
+                                                    – Gas-Wandgeräte:
+                                                      Default-Wert = 0 °C
+                                                      Das Gas-Wandgerät schaltet aus, wenn keine Werte mehr empfangen werden.
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                                                             VIESMANN              11
+Beschreibung der Funktionsobjekte – Kesselregler (Fortsetzung)
+
+Der Datenpunkt „Kesselsollleistung - Status“ hat höchste Priorität.        Falls über „Kesselsollleistung - Status“ keine Vorgabe gemacht wird
+Über ihn kann eine Leistungsvorgabe an den Heizkessel gegeben              oder der Status = 0xFF ist, wirken die anderen Anforderungen.
+werden. Diese Vorgabe übersteuert alle anderen Anforderungen. So           „Betriebsart - Kessel“ wird als nächstes ausgewertet.
+wird z. B. bei Status = 0 der Heizkessel ausgeschaltet. Bei Status =
+1 kann die Kessel-Soll-Leistung über den Wert vorgegeben werden.
+Bei Werten unterhalb der Leistung Grundstufe wird die Leistung
+Grundstufe gefahren usw.
+
+Der Datenpunkt „Betriebsart - Kessel“ hat folgende Wirkung:
+Wert      Bezeichnung                Beschreibung
+0         HVAC_AUTO                  Die Anforderungen über „Kesselsolltemperatur“ werden ausgewertet. Falls „Kesselsolltemperatur“
+1         HVAC_HEAT                  auf 0 °C geht, wird je nach Typ des Heizkessels gegebenenfalls weiterhin die Kesselmindesttempe-
+0xFF      (Default-Wert)             ratur gehalten.
+2         HVAC_MRNG_WRM_UP Keine Anforderung an den Heizkessel. Je nach Typ des Heizkessels wird gegebenenfalls die Kessel-
+                                     mindesttemperatur gehalten.
+(3)       HVAC_OFF                   Der Heizkessel wird ausgeschaltet. Die Drosselklappe wird geschlossen. Die Anforderung über „Kes-
+(4)                                  selsolltemperatur“ wird nicht berücksichtigt. Es wird keine Kesselmindesttemperatur gehalten.
+(5)
+6
+(9)
+7         HVAC_TEST                  Der Heizkessel arbeitet mit der Grundleistung. Die Anforderung über „Kesselsolltemperatur“ wird
+111       HVAC_LOW_FIRE              nicht berücksichtigt. Kesselmindest- und Kesselmaximaltemperatur sind aktiv.
+8         HVAC_EMERG_HEAT            Der Heizkessel arbeitet mit der Nennleistung. Die Anforderung über „Kesselsolltemperatur“ wird nicht
+112       HVAC_HIGH_FIRE             berücksichtigt. Kesselmindest- und Kesselmaximaltemperatur sind aktiv.
+110       HVAC_SLAVE_ACTIVE          Der Heizkessel berücksichtigt Temperatur- und Leistungsanforderung, d. h. es wird min. die über
+                                     „Kesselsollleistung - Wert“ übergebene Soll-Leistung und min. der über „Kesselsolltemperatur“ über-
+                                     gebene Temperatur-Sollwert gefahren. Kesselmindest- und Keselmaximaltemperatur sind aktiv.
+
+Der lokale Eingang „Harte Sperre“ wird immer ausgewertet und hat
+Vorrang, auch bei Steuerung über „Kesselsollleistung - Status“.
+
+Die Ausgangs-Datenpunkte des Kesselreglers
+Datenpunktname            Technik-ID Beschreibung
+Modulationsgrad - Sta-    0xA305     Momentane Kessel-Istleistung in % der Nennleistung:
+tus
+Modulationsgrad - Wert               Brennertyp              Brennerzustand          Byte [0]:                         Byte [1]:
+                                                                                     Wert                              Status
+                                     1-stufig                AUS                     0=0%                              0 = AUS
+                                                             EIN                     200 = 100 %                       1 = EIN
+                                     2-stufig                AUS                     0=0%                              0 = AUS
+                                                             Stufe 1                                                   1 = EIN
+                                                             Stufe 2                 200 = 100 %                       1 = EIN
+                                     Modulierend             AUS                     0=0%                              0 = AUS
+                                                             MOD                     1 bis 200 = 0,5 bis               1 = EIN
+                                                                                     100 %
+Effektive Kessellsolltem- 0xA307     Momentaner effektiver Kesseltemperatur-Sollwert
+peratur
+Kesselltemperatur         0xA309     Momentaner Kesseltemperatur-Istwert
+
+
+Umsetzung des Datenpunkts „Betriebsart - Kessel“ bei Wärmepumpen
+Um eine Fremdsteuerung über das Objekt „Kesselregler“ vornehmen            Die Einkopplung erfolgt über den Kesselregler der Wärmepumpe.
+zu können, muss das Anlagenschema „AS_Fremd“ eingestellt sein.
+Dadurch werden alle internen Anforderungen nicht berücksichtigt
+und die Wärmepumpe arbeitet nur noch als Erzeuger.
+
+LON                                                                             Interne Abbildung
+„Betriebsart - Kessel“          Betriebsart       Betriebsmo-          Bedarf             Mindestleis-     Temperatur-        Auswertung
+                                                  dus                                     tung             Sollwert           Anforderung
+                                                                                                                              der internen
+                                                                                                                              Heizkreisrege-
+                                                                                                                              lungen
+HVAC_NUL                        „Non LON“         Auto                 Keiner            0%                Nicht vorhan-      Nein
+                                                                                                           den
+HVAC_MRNG_WARMUP                                                                 Wie HVAC_NUL
+HVAC_AUTO                       Festwert          Auto                 Mittel           0%                 Kesseltempera-     Nein
+                                                                                                           tur-Sollwert
+
+
+                                                                                                                                                 5799740
+HVAC_ECONOMY                    Festwert          Auto                 Gering            0%                Kesseltempera-     Nein
+                                                                                                           tur-Sollwert
+
+
+12    VIESMANN                                                                                                             VITOGATE 300
+          Beschreibung der Funktionsobjekte – Kesselregler (Fortsetzung)
+
+          LON                                                                            Interne Abbildung
+          „Betriebsart - Kessel“         Betriebsart        Betriebsmo-        Bedarf              Mindestleis-    Temperatur-       Auswertung
+                                                            dus                                    tung            Sollwert          Anforderung
+                                                                                                                                     der internen
+                                                                                                                                     Heizkreisrege-
+                                                                                                                                     lungen
+          HVAC_LOW_FIRE                  Festwert           Heat               Gering             0%               20 °C             Nein
+          (Viessmann spezifisch)
+          HVAC_TEST                                                                     Wie HVAC_LOW_FIRE
+          HVAC_HEAT                      Festwert           Heat               Mittel             0%               Kesseltempera-    Nein
+                                                                                                                   tur-Sollwert
+          HVAC_HEAT_DHW                  Festwert           Heat               Mittel             0%               Kesseltempera-    Nein
+                                                                                                                   tur-Sollwert
+          HVAC_MAX_HEAT                  Festwert           Heat               Hoch               100 %            Nicht vorhan-     Nein
+                                                                                                                   den
+          HVAC_HIGH_FIRE                 Festwert           Heat               Hoch               0%               Parameter         Nein
+          (Viessmann spezifisch)                                                                                   „Max. Vorlauf-
+                                                                                                                   temperatur
+                                                                                                                   Wärmepumpe“
+          HVAC_EMERG_HEAT                                                           Wie HVAC_HIGH_FIRE
+          HVAC_FREE_COOL                 Festwert           Cool               Minimal        0%                   Kesseltempera-    Nein
+                                                                                                                   tur-Sollwert
+          HVAC_COOL                      Festwert           Cool               Mittel             0%               Kesseltempera-    Nein
+                                                                                                                   tur-Sollwert
+          HVAC_DEHUMID                   Festwert           Cool               Mittel             100 %            Nicht vorhan-     Nein
+                                                                                                                   den
+          HVAC_EMERG_COOL                Festwert           Cool               Maximal            100 %            Nicht vorhan-     Nein
+                                                                                                                   den
+          HVAC_OFF                       Standby            Off                Keiner             0%               Nicht vorhan-     Nein
+                                                                                                                   den
+          Alle weiteren                                                                   wie HVAC_OFF
+
+          „Kesselsollleistung - Status“ muss auf dem Default-Wert 0xFF blei-
+          ben.
+
+          Wert        Bezeichnung                  Beschreibung
+          255         HVAC_NUL                     Nur die Heizanforderungen eines externen Heizkreises werden angenommen. Externe Sollwertvor-
+                                                   gaben wirken nicht.
+          2           HVAC_MRNG_WARMUP             Wie HVAC_NUL
+          0           HVAC_AUTO                    Gesamtvorlauf-Sollwertvorgabe über „Kesselsolltemperatur“. Heizen, gegebenenfalls mit Zusatzhei-
+                                                   zung, die zeitverzögert zuschaltet. Kühlen mit Natural cooling und zeitverzögert Active cooling auf
+                                                   Sollwert. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen
+                                                   der Wärmepumpenregelung bestimmt.
+          13          HVAC_ECONOMY                 Gesamtvorlauf-Sollwertvorgabe über „Kesselsolltemperatur“. Heizen ohne Zusatzheizung. Kühlen
+                                                   nur mit Natual cooling. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die internen
+                                                   Anforderungen der Wärmepumpenregelung bestimmt.
+          111         HVAC_LOW_FIRE                Gesamtvorlauf-Sollwertvorgabe auf 20 °C. Heizen ohne Zusatzheizung. Kein Kühlen. Interne Anfor-
+                      (Viessmann spezifisch)       derungen der Wärmepumpenregelung werden nicht berücksichtigt.
+          7           HVAC_TEST                    Wie HVAC_LOW_FIRE
+          1           HVAC_HEAT                    Gesamtvorlauf-Sollwertvorgabe über „Kesselsolltemperatur“. Heizen, gegebenenfalls mit Zusatzhei-
+                                                   zung, die zeitverzögert zuschaltet. Kein Kühlen. Ob die Sollwertvorgabe umgesetzt wird, wird maß-
+                                                   geblich durch die internen Anforderungen der Wärmepumpenregelung bestimmt.
+          113         HVAC_HEAT_DHW                Warmwasserbereitung über „Kesselsolltemperatur“. Warmwasserbereitung gegebenenfalls mit
+                                                   Zusatzheizung, die zeitverzögert zuschaltet. Kein Kühlen. Ob die Sollwertvorgabe umgesetzt wird,
+                                                   wird maßgeblich durch die internen Anforderungen der Wärmepumpenregelung bestimmt.
+          12          HVAC_MAX_HEAT                Heizen, gegebenenfalls mit Zusatzheizung, die sofort zuschaltet. Kein Kühlen. Ob die Sollwertvor-
+                                                   gabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenrege-
+                                                   lung bestimmt.
+          112         HVAC_HIGH_FIRE               Gesamtvorlauf-Sollwertvorgabe ist die max. Vorlauftemperatur. Heizen, gegebenenfalls mit Zusatz-
+                      (Viessmann spezifisch)       heizung, die sofort zuschaltet. Kein Kühlen. Interne Anforderungen werden nicht berücksichtigt.
+          8           HVAC_EMERG_HEAT              Wie HVAC_HIGH_FIRE
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                                                           VIESMANN          13
+Beschreibung der Funktionsobjekte – Kesselregler (Fortsetzung)
+
+Wert     Bezeichnung       Beschreibung
+10       HVAC_FREE_COOL    Gesamtvorlauf-Sollwertvorgabe über „Kesselsolltemperatur“. Kühlen nur mit Natural cooling. Ob die
+                           Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepum-
+                           penregelung bestimmt.
+3        HVAC_COOL         Gesamtvorlauf-Sollwertvorgabe über „Kesselsolltemperatur“. Kühlen mit Natural cooling und zeitver-
+                           zögert Active cooling auf Sollwert. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich durch
+                           die internen Anforderungen der Wärmepumpenregelung bestimmt.
+14       HVAC_DEHUMID      Kühlen mit Acitve cooling sofort. Ob die Sollwertvorgabe umgesetzt wird, wird maßgeblich durch die
+                           internen Anforderungen der Wärmepumpenregelung bestimmt.
+16       HVAC_EMERG_COOL   Kühlen mit Active cooling sofort, auch falls Active cooling nicht freigegeben ist. Ob die Sollwertvor-
+                           gabe umgesetzt wird, wird maßgeblich durch die internen Anforderungen der Wärmepumpenrege-
+                           lung bestimmt.
+6        HVAC_OFF          Alle Anforderungen werden nicht berücksichtigt. Nur Frostschutz aktiv.
+         Alle weiteren     Wie HVAC_OFF
+
+
+
+
+                                                                                                                                    5799740
+
+14     VIESMANN                                                                                             VITOGATE 300
+          Übersicht
+
+          In den folgenden Übersichten sind die Einstellungen für die wichtigs-
+          ten Datenpunkte zusammengefasst.
+
+
+
+
+5799740
+
+          VITOGATE 300                                                            VIESMANN   15
+Vorlauftemperatur vorgeben auf Einzelkessel
+
+
+                                           Vorlauftemperatur vorgeben
+                                           auf Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:1
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000 gemäß Anlagenschema
+                                                                        AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                    0xA391 (eff °C)
+                      LON                                                           0xA393 (real °C)
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                         Modbus                BACnet
+       0xA382
+
+                                                                         HVAC_AUTO einstellen:
+
+                                                                         0 setzen              1 setzen
+
+       0xA383
+
+
+                            Schrittweite         Min. Hysterese                      °C vorgeben
+                            1K                   3K
+
+
+
+
+                                                                                                             5799740
+
+16     VIESMANN                                                                               VITOGATE 300
+          Modulation vorgeben auf Einzelkessel
+
+
+
+                                                 Modulation vorgeben auf
+                                                 Einzelkessel
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:1
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000 gemäß Anlagenschema
+                                                                           AUSGANGS-DATENPUNKT IM GLT
+
+
+                            LON                                                        0xA38F (real %)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                            Modbus                BACnet
+             0xA380
+
+                                                                            State einstellen:
+
+                                                                            1 setzen              2 setzen
+
+             0xA380
+
+
+                                  Schrittweite         Min. Hysterese       Value einstellen:
+                                  1%                   3%                   % vorgeben
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                          VIESMANN     17
+Modulation vorgeben auf Viessmann Kaskaden-Master
+
+
+                                           Modulation vorgeben auf
+                                           Viessmann Kaskaden-Master
+                                           gemäß Regelstrategie
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:2
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000:11
+                                                                       AUSGANGS-DATENPUNKT IM GLT
+
+
+                      LON                                                          0xA38F (real %)
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                        Modbus                BACnet
+       0xA380
+
+                                                                        State einstellen:
+
+                                                                        1 setzen              2 setzen
+
+       0xA380
+
+
+                            Schrittweite        Min. Hysterese          Value einstellen:
+                            1%                  3%                      % vorgeben
+
+
+
+
+                                                                                                            5799740
+
+18     VIESMANN                                                                              VITOGATE 300
+          Anlagenvorlauftemperatur vorgeben auf Viessmann Kaskaden-Master
+
+                                                 Anlagenvorlauftemperatur
+                                                 vorgeben auf Viessmann
+                                                 Kaskaden-Master gemäß
+                                                 Regelstrategie
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:2
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000:11
+                                                                            AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                        0xA391 (eff °C)
+                            LON                                                         0xA393 (real °C)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                             Modbus                BACnet
+             0xA382
+
+                                                                             HVAC_AUTO einstellen:
+
+                                                                             0 setzen              1 setzen
+
+             0xA383
+
+
+                                  Schrittweite         Min. Hysterese
+                                                                             °C vorgeben
+                                  1K                   3K
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                          VIESMANN      19
+Modulation vorgeben in Fremdkaskade, jeweils auf Einzelkessel
+
+
+                                           Modulation vorgeben auf
+                                           Fremdkaskade, jeweils
+                                           auf Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:2
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000:11
+                                                                     AUSGANGS-DATENPUNKT IM GLT
+
+
+                      LON                                                        0xA305 (real %)
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                      Modbus                BACnet
+       0xA300
+
+                                                                      State einstellen:
+
+                                                                      1 setzen              2 setzen
+
+       0xA300
+
+
+                            Schrittweite         Min. Hysterese       Value einstellen:
+                            1%                   3%                   % vorgeben
+
+
+
+
+                                                                                                          5799740
+
+20     VIESMANN                                                                            VITOGATE 300
+          Kesseltemperatur vorgeben in Fremdkaskade, jeweils auf Einzelkessel
+
+
+                                                 Kesseltemperatur
+                                                 vorgeben in
+                                                 Fremdkaskade, jeweils
+                                                 auf Einzelkessel
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:2
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000:11
+                                                                         AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                     0xA307 (eff. °C)
+                            LON                                                      0xA309 (real °C)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                          Modbus                BACnet
+             0xA302
+
+                                                                          HVAC_AUTO einstellen:
+
+                                                                          0 setzen              1 setzen
+
+
+                                                                          alternativ bei Wärmepumpenregelung:
+                                                                          HVAC_HEAT_DHW einstellen:
+                                                                          113 setzen            114 setzen
+
+             0xA303
+
+
+                                  Schrittweite        Min. Hysterese
+                                                                          °C vorgeben
+                                  1K                  3K
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                       VIESMANN        21
+Raumtemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                            Raumtemperatur vorgeben,
+                                            jeweils auf Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:1
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000 gemäß Anlagenschema
+                                                                       AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                   0xA406 (eff. °C)
+                      LON
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                        Modbus                BACnet
+       0xA400
+
+                                                                        HVAC_HEAT einstellen:
+
+                                                                        1 setzen              2 setzen
+
+
+                                                                        alternativ bei Wärmepumpenregelung:
+                                                                        HVAC_COOL einstellen:
+                                                                        3 setzen              4 setzen
+
+       0xA401
+
+
+                                       Schrittweite
+                                                                        °C vorgeben
+                                       1K
+
+
+
+
+                                                                                                              5799740
+
+22     VIESMANN                                                                               VITOGATE 300
+          Vorlauftemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                                 Vorlauftemperatur
+                                                 vorgeben, jeweils auf
+                                                 Einzelkessel
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:1
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000 gemäß Anlagenschema
+                                                                         AUSGANGS-DATENPUNKT IM GLT
+
+
+                            LON                                                    0x2544 (soll °C)
+                                                                                   0x2900 (real °C)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                          Modbus              BACnet
+             0xA400
+
+                                                                          HVAC_FLOW_TEMP einstellen:
+
+                                                                          100 setzen          101 setzen
+
+             0xA403
+
+
+                                  Schrittweite         Min. Hysterese
+                                                                          °C vorgeben
+                                  1K                   3K
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                     VIESMANN        23
+Raumtemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                            Raumtemperatur vorgeben,
+                                            jeweils auf Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:1
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000 gemäß Anlagenschema
+                                                                       AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                   0xA446 (eff. °C)
+                      LON
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                        Modbus                BACnet
+       0xA440
+
+                                                                        HVAC_HEAT einstellen:
+
+                                                                        1 setzen              2 setzen
+
+
+                                                                        alternativ bei Wärmepumpenregelung:
+                                                                        HVAC_COOL einstellen:
+                                                                        3 setzen              4 setzen
+
+       0xA441
+
+
+                                       Schrittweite
+                                                                        °C vorgeben
+                                       1K
+
+
+
+
+                                                                                                              5799740
+
+24     VIESMANN                                                                               VITOGATE 300
+          Vorlauftemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                                 Vorlauftemperatur
+                                                 vorgeben, jeweils auf
+                                                 Einzelkessel
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:1
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000 gemäß Anlagenschema
+                                                                         AUSGANGS-DATENPUNKT IM GLT
+
+
+                            LON                                                    0x3544 (soll °C)
+                                                                                   0x3900 (real °C)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                          Modbus              BACnet
+             0xA440
+
+                                                                          HVAC_FLOW_TEMP einstellen:
+
+                                                                          100 setzen          101 setzen
+
+             0xA443
+
+
+                                  Schrittweite         Min. Hysterese
+                                                                          °C vorgeben
+                                  1K                   3K
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                     VIESMANN        25
+Raumtemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                            Raumtemperatur vorgeben,
+                                            jeweils auf Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:1
+
+     Erforderliche Einstellung Wärmepumpenregelung:
+     Codierung 7000 gemäß Anlagenschema
+                                                                       AUSGANGS-DATENPUNKT IM GLT
+
+                                                                                   0xA486 (eff. °C)
+                      LON
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                        Modbus                BACnet
+       0xA480
+
+                                                                        HVAC_HEAT einstellen:
+
+                                                                        1 setzen              2 setzen
+
+
+                                                                        alternativ bei Wärmepumpenregelung:
+                                                                        HVAC_COOL einstellen:
+                                                                        3 setzen              4 setzen
+
+       0xA481
+
+
+                                       Schrittweite
+                                                                        °C vorgeben
+                                       1K
+
+
+
+
+                                                                                                              5799740
+
+26     VIESMANN                                                                               VITOGATE 300
+          Vorlauftemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                                 Vorlauftemperatur
+                                                 vorgeben, jeweils auf
+                                                 Einzelkessel
+
+
+
+
+           KESSELREGLER
+
+           Erforderliche Einstellung Regelung:
+           Codierung 01:1
+
+           Erforderliche Einstellung Wärmepumpenregelung:
+           Codierung 7000 gemäß Anlagenschema
+                                                                         AUSGANGS-DATENPUNKT IM GLT
+
+
+                            LON                                                    0x4544 (soll °C)
+                                                                                   0x4900 (real °C)
+
+
+
+
+           ZENTRALE FUNKTIONEN
+           REGELUNG
+                                                                          Modbus              BACnet
+             0xA480
+
+                                                                          HVAC_FLOW_TEMP einstellen:
+
+                                                                          100 setzen          101 setzen
+
+             0xA483
+
+
+                                  Schrittweite         Min. Hysterese
+                                                                          °C vorgeben
+                                  1K                   3K
+
+
+
+
+5799740
+
+          VITOGATE 300                                                                     VIESMANN        27
+Warmwassertemperatur vorgeben, jeweils auf Einzelkessel
+
+
+                                           Warmwassertemperatur
+                                           vorgeben, jeweils auf
+                                           Einzelkessel
+
+
+
+
+     KESSELREGLER
+
+     Erforderliche Einstellung Regelung:
+     Codierung 01:1                                                AUSGANGS-DATENPUNKT IM GLT
+     Erforderliche Einstellung Wärmepumpenregelung:                 0xA3C5 (eff. °C)
+     Codierung 7000 gemäß Anlagenschema                             und je nach Regelung einer
+                                                                    oder mehrerer der folgenden
+                                                                    Datenpunkte (real °C):
+                                                                    0x0812 0x7480 0x01CD
+                      LON                                           0x0814 0x7480 0x01CE
+
+
+
+
+     ZENTRALE FUNKTIONEN
+     REGELUNG
+                                                                    Modbus                BACnet
+       0xA3C2
+
+                                                                    HVAC_HEAT einstellen:
+
+                                                                    1 setzen              2 setzen
+
+       0xA3C0
+
+
+                            Schrittweite        Min. Hysterese
+                                                                    °C vorgeben
+                            1K                  3K
+
+
+
+
+                                                                          Technische Änderungen vorbehalten!
+
+
+
+Viessmann Ges.m.b.H.                                                        Viessmann Werke GmbH & Co. KG
+A-4641 Steinhaus bei Wels                                                   35108 Allendorf
+
+
+                                                                                                               5799740
+Telefon: 07242 62381-110                                                    Telefon: 06452 70-0
+Telefax: 07242 62381-440                                                    Telefax: 06452 70-2780
+www.viessmann.at                                                            www.viessmann.de
+
+28     VIESMANN                                                                          VITOGATE 300
+

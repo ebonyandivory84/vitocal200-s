@@ -1,0 +1,17 @@
+{
+  "enableRuntimeExternalWrites": false,
+  "enableExperimentalFlowOverride": false,
+  "enableExperimentalPlantManager": false,
+  "enableHeartbeatRefresh": false,
+  "enableExpertHeatMode": false,
+  "enableOneTimeDhwWrites": false,
+  "enableLegacyB000Writes": false,
+  "roomSetpointMin": 18,
+  "roomSetpointMax": 24,
+  "dhwSetpointMin": 40,
+  "dhwSetpointMax": 50,
+  "flowSetpointMin": 20,
+  "flowSetpointMax": 45,
+  "minWriteIntervalMs": 1000,
+  "heartbeatIntervalMs": 60000
+}

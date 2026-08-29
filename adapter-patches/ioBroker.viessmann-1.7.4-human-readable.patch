@@ -1,0 +1,560 @@
+diff --git a/main.js b/main.js
+index b47f4c5..31f9450 100644
+--- a/main.js
++++ b/main.js
+@@ -43,6 +43,7 @@ class Viessmann extends utils.Adapter {
+         this.on('ready', this.onReady.bind(this));
+         this.on('stateChange', this.onStateChange.bind(this));
+         this.on('unload', this.onUnload.bind(this));
++        this.lastValues = new Map();
+         this.ready = false;
+     }
+ 
+@@ -253,10 +254,12 @@ class Viessmann extends utils.Adapter {
+                         try {
+                             let temp = JSON.stringify(result);
+                             temp = JSON.parse(temp);
+-                            const dp = await this.getImport(temp, units, types);
++                            const dp = await this.getImportHumanReadable(temp, units, types, this.config.datapoints);
+                             await this.extendForeignObjectAsync(`system.adapter.${this.namespace}`, {
+                                 native: { datapoints: dp, new_read: false },
+                             });
++                            this.config.datapoints = dp;
++                            this.config.new_read = false;
+                             this.log.info('read vito.xml successfull');
+                             this.main();
+                         } catch (e) {
+@@ -334,6 +337,98 @@ class Viessmann extends utils.Adapter {
+             return datapoints;
+         }
+     }
++
++    async getImportHumanReadable(json, units, types, oldDatapoints = null) {
++        const dp = {
++            gets: {},
++            sets: {},
++            system: {},
++        };
++        const vitoRoot = json.vito || json.Vito || json['v-control'] || json['V-Control'];
++
++        if (!vitoRoot) {
++            this.log.warn('No vito element found in XML');
++            return dp;
++        }
++
++        const device = vitoRoot.devices?.[0]?.device?.[0];
++        if (device?.$) {
++            dp.system['-ID'] = device.$.ID || '';
++            dp.system['-name'] = device.$.name || '';
++            dp.system['-protocol'] = device.$.protocol || '';
++        }
++
++        const commands = vitoRoot.commands?.[0]?.command;
++        if (!Array.isArray(commands)) {
++            this.log.warn('No commands found in vito.xml');
++            return dp;
++        }
++
++        for (const cmdRaw of commands) {
++            if (!cmdRaw.$?.name) {
++                continue;
++            }
++
++            const command = cmdRaw.$.name;
++            const attrs = cmdRaw.$;
++            const description = attrs.description || cmdRaw.description?.[0] || '';
++            const unitKey = cmdRaw.unit?.[0];
++
++            if (command.startsWith('get') && command.length > 3) {
++                const defaultName = command.slice(3);
++                const name = attrs.iobrokerName || defaultName;
++                const oldItems = Object.values(oldDatapoints?.gets || {});
++                const oldItem = oldItems.find(
++                    item => item.command === command || item.name === name || item.name === defaultName,
++                );
++                const item = {
++                    name,
++                    unit: units?.[unitKey]?.unit || '',
++                    type: this.get_type(types?.[unitKey]?.type),
++                    description,
++                    polling: oldItem?.polling ?? -1,
++                    command,
++                    role: attrs.iobrokerRole || '',
++                    min: this.parseOptionalNumber(attrs.iobrokerMin),
++                    max: this.parseOptionalNumber(attrs.iobrokerMax),
++                    scale: this.parseOptionalNumber(attrs.iobrokerScale),
++                    factorState: attrs.iobrokerFactorState || '',
++                    factorMultiplier: this.parseOptionalNumber(attrs.iobrokerFactorMultiplier) ?? 1,
++                };
++
++                if (attrs.iobrokerStates) {
++                    try {
++                        item.states = JSON.parse(attrs.iobrokerStates);
++                    } catch (error) {
++                        this.log.warn(`Invalid iobrokerStates JSON for ${command}: ${error}`);
++                    }
++                }
++                if (attrs.iobrokerUnit !== undefined) {
++                    item.unit = attrs.iobrokerUnit;
++                }
++                if (!item.role) {
++                    item.role = this.inferRole(item.name, item.unit, item.type);
++                }
++
++                dp.gets[item.name] = item;
++                continue;
++            }
++
++            if (command.startsWith('set') && command.length > 3) {
++                const name = command.slice(3);
++                dp.sets[name] = {
++                    name,
++                    description,
++                    polling: 'nicht möglich',
++                    type: this.get_type(types?.[unitKey]?.type),
++                    command,
++                };
++            }
++        }
++
++        this.log.debug(`Objects are: ${JSON.stringify(dp)}`);
++        return dp;
++    }
+     //###########################################################################################################
+ 
+     //######GET TYPES########################################################################################
+@@ -383,6 +478,75 @@ class Viessmann extends utils.Adapter {
+                 return 'mixed';
+         }
+     }
++
++    parseOptionalNumber(value) {
++        if (value === undefined || value === null || value === '') {
++            return undefined;
++        }
++        const parsed = Number(value);
++        return Number.isFinite(parsed) ? parsed : undefined;
++    }
++
++    inferRole(name, unit, type) {
++        if (unit === '°C') {
++            return 'value.temperature';
++        }
++        if (unit === 'W') {
++            return 'value.power';
++        }
++        if (unit === 'kWh') {
++            return 'value.energy';
++        }
++        if (unit === 'Hz') {
++            return 'value.frequency';
++        }
++        if (unit === 'bar') {
++            return 'value.pressure';
++        }
++        if (unit === 'h') {
++            return 'value.interval';
++        }
++        if (String(name).startsWith('Status') || String(name).startsWith('Freigabe')) {
++            return 'indicator';
++        }
++        if (type === 'string') {
++            return 'text';
++        }
++        return 'value';
++    }
++
++    async formatReadValue(value, poll) {
++        const trimmed = String(value).trim();
++        if (poll.type !== 'number') {
++            return trimmed;
++        }
++
++        const valueWithoutUnit = this.split_unit(trimmed);
++        const parsed = Number.parseFloat(valueWithoutUnit);
++        if (!Number.isFinite(parsed)) {
++            this.log.warn(`Cannot parse numeric reply for ${poll.name}: ${trimmed}`);
++            return undefined;
++        }
++
++        let result = parsed;
++        if (Number.isFinite(poll.scale)) {
++            result *= poll.scale;
++        }
++        if (poll.factorState) {
++            let factor = this.parseOptionalNumber(this.lastValues.get(poll.factorState));
++            if (!(factor > 0)) {
++                const factorState = await this.getStateAsync(`get.${poll.factorState}`);
++                factor = this.parseOptionalNumber(factorState && factorState.val);
++            }
++            if (!(factor > 0)) {
++                this.log.warn(`Cannot scale ${poll.name}: factor state ${poll.factorState} is unavailable`);
++                return undefined;
++            }
++            result *= factor * (poll.factorMultiplier ?? 1);
++        }
++
++        return this.roundNumber(result, 3);
++    }
+     //###########################################################################################################
+ 
+     //######SET STATES###########################################################################################
+@@ -404,6 +568,56 @@ class Viessmann extends utils.Adapter {
+             callback,
+         );
+     }
++
++    async upsertState(path, item, write) {
++        const common = {
++            name: item.name,
++            unit: item.unit || '',
++            type: item.type || 'mixed',
++            role: item.role || (write ? 'state' : 'value'),
++            desc: item.description || '',
++            read: true,
++            write,
++        };
++        if (item.states) {
++            common.states = item.states;
++        }
++        if (item.min !== undefined) {
++            common.min = item.min;
++        }
++        if (item.max !== undefined) {
++            common.max = item.max;
++        }
++
++        const native = { command: item.command };
++        if (item.scale !== undefined) {
++            native.scale = item.scale;
++        }
++        if (item.factorState) {
++            native.factorState = item.factorState;
++            native.factorMultiplier = item.factorMultiplier ?? 1;
++        }
++
++        await this.extendObjectAsync(`${path}${item.name}`, {
++            type: 'state',
++            common,
++            native,
++        });
++    }
++
++    async refreshAllObjects() {
++        const gets = Object.values(this.config.datapoints?.gets || {});
++        const sets = Object.values(this.config.datapoints?.sets || {});
++
++        for (const item of gets) {
++            if (!this.config.states_only || (item.polling !== -1 && item.polling !== '-1')) {
++                await this.upsertState('get.', item, false);
++            }
++        }
++        for (const item of sets) {
++            await this.upsertState('set.', item, true);
++        }
++    }
+     //###########################################################################################################
+ 
+     //######CONFIG STATES########################################################################################
+@@ -588,6 +802,10 @@ class Viessmann extends utils.Adapter {
+                 obj.command = this.config.datapoints.gets[i].command;
+                 obj.description = this.config.datapoints.gets[i].description;
+                 obj.polling = this.config.datapoints.gets[i].polling;
++                obj.type = this.config.datapoints.gets[i].type;
++                obj.scale = this.config.datapoints.gets[i].scale;
++                obj.factorState = this.config.datapoints.gets[i].factorState;
++                obj.factorMultiplier = this.config.datapoints.gets[i].factorMultiplier;
+                 obj.lastpoll = 0;
+                 toPoll[i] = obj;
+             }
+@@ -681,7 +899,7 @@ class Viessmann extends utils.Adapter {
+         let err_count = 0;
+ 
+         clearTimeout(timerReconnect);
+-        this.setAllObjects();
++        await this.refreshAllObjects();
+ 
+         this.connectSystem();
+ 
+@@ -707,7 +925,7 @@ class Viessmann extends utils.Adapter {
+             this.stepPolling();
+         });
+ 
+-        client.on('data', data => {
++        client.on('data', async data => {
+             data = String(data);
+             const ok = /OK/;
+             const fail = /ERR/;
+@@ -746,12 +964,15 @@ class Viessmann extends utils.Adapter {
+                 }
+                 try {
+                     data = data.replace(/\n$/, '');
++                    const poll = toPoll[step];
+                     if (answer) {
+-                        data = this.split_unit(data);
+-                        if (!isNaN(data)) {
+-                            data = this.roundNumber(parseFloat(data), 2);
++                        const formattedValue = await this.formatReadValue(data, poll);
++                        if (formattedValue === undefined) {
++                            this.stepPolling();
++                            return;
+                         }
+-                        this.setState(`get.${toPoll[step].name}`, data, true, err => {
++                        this.lastValues.set(poll.name, formattedValue);
++                        this.setState(`get.${poll.name}`, formattedValue, true, err => {
+                             if (err) {
+                                 this.log.error(err);
+                             }
+diff --git a/main.test.js b/main.test.js
+index 55c09e8..4c0463a 100644
+--- a/main.test.js
++++ b/main.test.js
+@@ -1,30 +1,204 @@
+ 'use strict';
+ 
+-/**
+- * This is a dummy TypeScript test file using chai and mocha
+- *
+- * It's automatically excluded from npm and its build output is excluded from both git and npm.
+- * It is advised to test all your modules with accompanying *.test.js-files
+- */
+-
+-// tslint:disable:no-unused-expression
+-
+-const { expect } = require('chai');
+-// import { functionToTest } from "./moduleToTest";
+-
+-describe('module to test => function to test', () => {
+-	// initializing logic
+-	const expected = 5;
+-
+-	it(`should return ${expected}`, () => {
+-		const result = 5;
+-		// assign result a value from functionToTest
+-		expect(result).to.equal(expected);
+-		// or using the should() syntax
+-		result.should.equal(expected);
+-	});
+-	// ... more tests => it
++const assert = require('node:assert/strict');
++const { EventEmitter } = require('node:events');
++const proxyquire = require('proxyquire').noCallThru();
+ 
++class FakeAdapter extends EventEmitter {
++    constructor(options) {
++        super();
++        this.config = options.config || {};
++        this.namespace = 'viessmann.0';
++        this.extendedObjects = [];
++        this.persistedStates = new Map();
++        this.warnings = [];
++        this.log = {
++            debug: () => undefined,
++            error: () => undefined,
++            info: () => undefined,
++            warn: message => this.warnings.push(message),
++        };
++    }
++
++    async extendObjectAsync(id, object) {
++        this.extendedObjects.push({ id, object });
++    }
++
++    async getStateAsync(id) {
++        return this.persistedStates.get(id) || null;
++    }
++}
++
++const createAdapter = proxyquire('./main', {
++    '@iobroker/adapter-core': { Adapter: FakeAdapter },
++});
++
++function makeAdapter(config = {}) {
++    return createAdapter({ config });
++}
++
++describe('human-readable XML metadata on adapter 1.7.4', () => {
++    it('imports metadata and keeps the previous polling interval', async () => {
++        const adapter = makeAdapter();
++        const xml = {
++            vito: {
++                devices: [{ device: [{ $: { ID: '204D', name: 'Vitocal 200-S', protocol: 'P300' } }] }],
++                commands: [
++                    {
++                        command: [
++                            {
++                                $: {
++                                    name: 'getEnergieElektrischWWKWh',
++                                    iobrokerName: 'EnergieWWKWh',
++                                    iobrokerRole: 'value.energy',
++                                    iobrokerUnit: 'kWh',
++                                    iobrokerMin: '0',
++                                    iobrokerMax: '999999',
++                                    iobrokerFactorState: 'EnergieFaktor',
++                                    iobrokerFactorMultiplier: '0.1',
++                                },
++                                unit: ['CO'],
++                                description: ['Elektrische Energie Warmwasser'],
++                            },
++                            {
++                                $: {
++                                    name: 'getStatusHeizstabSt1',
++                                    iobrokerStates: '{"0":"Aus","1":"Ein"}',
++                                },
++                                unit: ['RT'],
++                            },
++                        ],
++                    },
++                ],
++            },
++        };
++
++        const result = await adapter.getImportHumanReadable(
++            xml,
++            { CO: { unit: '' }, RT: { unit: '' } },
++            { CO: { type: 'int' }, RT: { type: 'uchar' } },
++            { gets: { old: { name: 'EnergieWWKWh', polling: 60 } } },
++        );
++
++        assert.deepEqual(result.system, {
++            '-ID': '204D',
++            '-name': 'Vitocal 200-S',
++            '-protocol': 'P300',
++        });
++        assert.deepEqual(
++            {
++                name: result.gets.EnergieWWKWh.name,
++                role: result.gets.EnergieWWKWh.role,
++                unit: result.gets.EnergieWWKWh.unit,
++                type: result.gets.EnergieWWKWh.type,
++                min: result.gets.EnergieWWKWh.min,
++                max: result.gets.EnergieWWKWh.max,
++                polling: result.gets.EnergieWWKWh.polling,
++                factorState: result.gets.EnergieWWKWh.factorState,
++                factorMultiplier: result.gets.EnergieWWKWh.factorMultiplier,
++            },
++            {
++                name: 'EnergieWWKWh',
++                role: 'value.energy',
++                unit: 'kWh',
++                type: 'number',
++                min: 0,
++                max: 999999,
++                polling: 60,
++                factorState: 'EnergieFaktor',
++                factorMultiplier: 0.1,
++            },
++        );
++        assert.deepEqual(result.gets.StatusHeizstabSt1.states, { 0: 'Aus', 1: 'Ein' });
++        assert.equal(result.gets.StatusHeizstabSt1.role, 'indicator');
++    });
++});
++
++describe('safe object refresh on adapter 1.7.4', () => {
++    it('upserts metadata without enumerating or deleting old states', async () => {
++        const adapter = makeAdapter({
++            states_only: false,
++            datapoints: {
++                gets: {
++                    LeistungElektrischVerdichter: {
++                        name: 'LeistungElektrischVerdichter',
++                        command: 'getLeistungElektrischVerdichter',
++                        description: 'Aktuelle Verdichterleistung',
++                        unit: 'W',
++                        type: 'number',
++                        role: 'value.power',
++                        min: 0,
++                        max: 12000,
++                    },
++                },
++                sets: {},
++            },
++        });
++        adapter.getStatesOf = () => {
++            throw new Error('refreshAllObjects must not enumerate existing states');
++        };
++        adapter.delObject = () => {
++            throw new Error('refreshAllObjects must not delete existing states');
++        };
++
++        await adapter.refreshAllObjects();
++
++        assert.equal(adapter.extendedObjects.length, 1);
++        assert.equal(adapter.extendedObjects[0].id, 'get.LeistungElektrischVerdichter');
++        assert.deepEqual(adapter.extendedObjects[0].object.common, {
++            name: 'LeistungElektrischVerdichter',
++            unit: 'W',
++            type: 'number',
++            role: 'value.power',
++            desc: 'Aktuelle Verdichterleistung',
++            min: 0,
++            max: 12000,
++            read: true,
++            write: false,
++        });
++    });
+ });
+ 
+-// ... more test suites => describe
++describe('reply conversion on adapter 1.7.4', () => {
++    it('preserves raw and string replies', async () => {
++        const adapter = makeAdapter();
++
++        assert.equal(
++            await adapter.formatReadValue('  0012A0FF\n', { name: 'MeldungenRaw', type: 'mixed' }),
++            '0012A0FF',
++        );
++        assert.equal(
++            await adapter.formatReadValue('  00001234\n', { name: 'Seriennummer', type: 'string' }),
++            '00001234',
++        );
++    });
++
++    it('uses cached and persisted energy factors', async () => {
++        const adapter = makeAdapter();
++        const poll = {
++            name: 'EnergieElektrischWWKWh',
++            type: 'number',
++            factorState: 'EnergieFaktor',
++            factorMultiplier: 0.1,
++        };
++        adapter.lastValues.set('EnergieFaktor', 10);
++        assert.equal(await adapter.formatReadValue('123', poll), 123);
++
++        adapter.lastValues.clear();
++        adapter.persistedStates.set('get.EnergieFaktor', { val: 100 });
++        assert.equal(await adapter.formatReadValue('12', poll), 120);
++    });
++
++    it('does not publish a misleading kWh value without a valid factor', async () => {
++        const adapter = makeAdapter();
++        const poll = {
++            name: 'EnergieElektrischWWKWh',
++            type: 'number',
++            factorState: 'EnergieFaktor',
++            factorMultiplier: 0.1,
++        };
++
++        assert.equal(await adapter.formatReadValue('12', poll), undefined);
++        assert.match(adapter.warnings.at(-1), /factor state EnergieFaktor is unavailable/);
++    });
++});
+diff --git a/test/mocha.setup.js b/test/mocha.setup.js
+index abf1989..5ac3375 100644
+--- a/test/mocha.setup.js
++++ b/test/mocha.setup.js
+@@ -2,13 +2,3 @@
+ process.on('unhandledRejection', (e) => {
+ 	throw e;
+ });
+-
+-// enable the should interface with sinon
+-// and load chai-as-promised and sinon-chai by default
+-const sinonChai = require('sinon-chai');
+-const chaiAsPromised = require('chai-as-promised');
+-const { should, use } = require('chai');
+-
+-should();
+-use(sinonChai);
+-use(chaiAsPromised);
+\ No newline at end of file

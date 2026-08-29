@@ -1,0 +1,1411 @@
+                                                                              Vitogate 300 Datenpunktliste
+
+
+        Gruppe             Datenpunktname       Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                            Datenpunktbeschreibung
+Allgemein              Mischer ext.           0x0603         AI-13         IN-18         °C                            Vorlauftemperatur-Sollwert des externen Wärmeerzeugers
+                       Wärmeerzeuger -
+                       Solltemperatur
+Allgemein              Rücklauftemperatur     0x01C7         AI-74         IN-98         °C                            Rücklauftemperatur-Istwert Sekundärkreis für die Wärmepumpe 2. Stufe
+                       Sekundär 2
+Anlage                 Anlagenvorlauftemperat 0x01CA         AI-76         IN-101        °C                            Anlagenvorlauftemperatur-Istwert
+                       ur-Istwert
+Anlage                 Ansteuerung ext.       0x048B         BI-5          ST-5          0: AUS, 1: EIN                Ansteuerung des externen Wärmeerzeugers:
+                       Wärmeerzeuger                                                                                   0: Aus
+                                                                                                                       1: Ein
+Anlage                 Außentemperatur        0x01C1         AI-69         IN-89         °C                            Gedämpfter Außentemperatur-Istwert
+Anlage                 Heizwasser-            0x01CB         AI-77         IN-103        °C                            Puffertemperatur-Istwert
+                       Pufferspeichertemperat
+                       ur
+Anlage                 Mischer ext.           0x0603         MI-39         IN-136        -1: ZU, 0: Regelbetrieb, 1:   Betriebszustand des Mischers externer Wärmeerzeuger:
+                       Wärmeerzeuger - Befehl                                            AUF                           0: Mischer im Regelbetrieb - Um den Anlagenvorlauftemperatur-Sollwert zu erreichen, wird
+                                                                                                                       Heizwasser des externen Wärmeerzeugers in den Anlagenvorlauf eingespeist.
+                                                                                                                       1: Mischer vollständig AUF
+                                                                                                                       -1: Mischer vollständig ZU
+
+Anlage                 Mischer ext.           0x0603         BI-1          ST-1          0: Vorhanden, 1: Nicht        Status des Mischers externer Wärmeerzeuger:
+                       Wärmeerzeuger - Status                                            vorhanden                     0: Mischer nicht angeschlossen
+                                                                                                                       1: Mischer angeschlossen
+Anlagenausstattung     3-Wege-Ventil           0x0495        BI-47         ST-47         0: Vorhanden, 1: Nicht        Status Wärmepumpe 2. Stufe:
+                       Heizen/WW2                                                        vorhanden                     0: Wärmepumpe 2. Stufe ist vorhanden.
+                       vorhanden                                                                                       1: Wärmepumpe 2. Stufe ist nicht vorhanden.
+Anlagenausstattung     Relais Primärquelle 2   0x0483        BI-46         ST-46         0: Vorhanden, 1: Nicht        Status der Primärquelle (Primärpumpe oder Ventilator) für die Wärmepumpe 2. Stufe:
+                                                                                         vorhanden                     0: Primärquelle nicht vorhanden
+                                                                                                                       1: Primärquelle vorhanden
+
+Außeneinheit           Leistung Verdichter     0xB423        AI-141        IN-190        %                             Leistung des Verdichters:
+                                                                                                                       - Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                                                       - Bei Wärmepumpen mit 2-stufigem Kältekreis für Verdichter 1
+                                                                                                                       Nur für Verdichter mit Leistungsregelung.
+Außeneinheit           Rücklauftemperatur      0x01C6        AI-73         IN-96         °C                            Rücklauftemperatur-Istwert Sekundärkreis:
+                       Sekundär 1                                                                                      Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+Betriebsstunden Anlage Active cooling          0x058C        AI-16         IN-21         Stunden                       Summe der Betriebsstunden des Verdichters für den aktiven Kühlbetrieb:
+                                                                                                                       Gemessen ab der Erstinbetriebnahme der Wärmepumpe
+
+
+                                                                           BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                            1/31
+                                                                               Vitogate 300 Datenpunktliste
+
+
+         Gruppe           Datenpunktname         Technik-ID     BACnet-ID     Modbus-ID          Wertebereich                                    Datenpunktbeschreibung
+Betriebsstunden Anlage Heizkreispumpe          0x058D         AI-24         IN-29         Stunden                Summe der Betriebsstunden der Heizkreispumpe A1/HK1:
+                       Heizkreis A1/HK1                                                                          Gemessen ab der Erstinbetriebnahme der Heizkreispumpe.
+Betriebsstunden Anlage Heizkreispumpe          0x058E         AI-25         IN-30         Stunden                Summe der Betriebsstunden der Heizkreispumpe M2/HK2:
+                       Heizkreis M2/HK2                                                                          Gemessen ab der Erstinbetriebnahme der Heizkreispumpe.
+Betriebsstunden Anlage Heizkreispumpe          0x058F         AI-26         IN-31         Stunden                Summe der Betriebsstunden der Heizkreispumpe M3/HK3:
+                       Heizkreis M3/HK3                                                                          Gemessen ab der Erstinbetriebnahme der Heizkreispumpe.
+Betriebsstunden Anlage Speicherladepumpe       0x0596         AI-38         IN-43         Stunden                Summe der Betriebsstunden der Speicherladepumpe:
+                                                                                                                 Gemessen ab der Erstinbetriebnahme der Speicherladepumpe
+Betriebsstunden WP    EEV1 Verdichter          0x05A8         AI-18         IN-23         Stunden
+Betriebsstunden WP    EEV2 Verdichter          0x05A9         AI-19         IN-24         Stunden
+Eingänge WP           Schalter EVU-Sperre E-   0x03C4         BI-60         ST-60         0: S_AUS, 1: S_EIN     Heizwasser-Durchlauferhitzer gesperrt
+                      Heizstab
+Energiebilanz         COP Heizbetrieb          0x1690         AI-116        IN-161                               Leistungszahl COP des Verdichters:
+                                                                                                                 - Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                                                 - Bei Wärmepumpen mit 2-stufigem Kältekreis für Verdichter 1
+                                                                                                                 Gemessen ab der Erstinbetriebnahme der Wärmepumpe.
+Energiebilanz         COP                      0x1691         AI-61         IN-78                                Leistungszahl COP des Verdichters für die Wärmepumpe 2. Stufe oder des Verdichters 2 bei
+                      Warmwasserbetrieb                                                                          Wärmepumpen mit 2-stufigem Kältekreis:
+                                                                                                                 Gemessen ab der Erstinbetriebnahme der Wärmepumpe.
+Energiebilanz         Elektroenergie Heizen    0x1661         AI-120        IN-166        kWh
+                      Verdichter 2
+Energiebilanz         Elektroenergie PV        0x1678         AI-115        IN-159        kWh                    Von der Photovoltaikanlage abgegebene Energiemenge der letzten 12 Monate in kWh
+
+Energiebilanz         Energiebilanz Faktor     0x163F         AV-42         HO-57                                Gibt den eingestellten Faktor für die von der Wärmepumpe gelieferten Energiewerte an
+
+Energiebilanz         Heizwärme Heizen         0x1641         AI-119        IN-165        kWh
+                      Verdichter 2
+Energiebilanz         Jahresarbeitszahl Kühlen 0x1683         AI-118        IN-164                               Berechnete Jahresarbeitszahl der Wärmepumpe für Raumkühlung
+
+Energiebilanz         Mittlere primäre       0x16B0           AI-117        IN-162        °C
+                      Eingangstemperatur
+Energiebilanz         Mittlere sekundäre     0x16B3           AI-64         IN-81         °C                     Gemittelter Rücklauftemperatur-Istwert Sekundärkreis:
+                      Rücklauftemperatur RL1                                                                     Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+
+Energiebilanz         Mittlere sekundäre     0x16B4           AI-65         IN-82         °C                     Gemittelter Rücklauftemperatur-Istwert Sekundärkreis für die Wärmepumpe 2. Stufe
+                      Rücklauftemperatur RL2
+
+
+
+
+                                                                            BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                       2/31
+                                                                                 Vitogate 300 Datenpunktliste
+
+
+        Gruppe             Datenpunktname          Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                          Datenpunktbeschreibung
+Energiebilanz           Mittlere sekundäre       0x16B2         AI-63         IN-80         °C                          Gemittelter Vorlauftemperatur-Istwert Sekundärkreis:
+                        Vorlauftemperatur                                                                               Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+Funktionen Heizkessel   Betriebsart - Heizkessel 0xA302         MV-22         HO-77         0: HVAC_AUTO, 1:            Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                            HVAC_HEAT, 2:               Wärmeerzeuger".
+                                                                                            HVAC_MRNG_WRMUP, 3:
+                                                                                            HVAC_COOL, 6: HVAC_OFF,
+                                                                                            7: HVAC_TEST, 8:
+                                                                                            HVAC_EMERG_HEAT, 10:
+                                                                                            HVAC_FREE_COOL, 12:
+                                                                                            HVAC_MAX_HEAT, 13:
+                                                                                            HVAC_ECONOMY, 14:
+                                                                                            HVAC_DEHUMID, 16:
+                                                                                            HVAC_EMERG_COOL, 111:
+                                                                                            HVAC_LOW_FIRE, 112:
+                                                                                            HVAC_HIGH_FIRE, 113:
+                                                                                            HVAC_HEAT_DHW, 255:
+                                                                                            HVAC_NUL
+
+Funktionen Heizkessel   Effektive                 0xA307        AI-3          IN-5          °C                          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                        Kesselsolltemperatur                                                                            Wärmeerzeuger".
+
+Funktionen Heizkessel   Kesselleistung - Status   0xA305        BI-59         ST-59         0: AUS, 1: EIN              Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                                                        Wärmeerzeuger".
+Funktionen Heizkessel   Kesselsollleistung -      0xA300        MV-13         HO-59         0: AUS, 1: EIN, 255: AUTO   Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                        Status                                                                                          Wärmeerzeuger".
+Funktionen Heizkessel   Kesselsollleistung - Wert 0xA300        AV-44         HO-60         0..100 %                    Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                                                        Wärmeerzeuger".
+Funktionen Heizkessel   Kesselsolltemperatur      0xA303        AV-5          HO-8          0..127 °C                   Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                                                        Wärmeerzeuger".
+Funktionen Heizkessel   Kesseltemperatur          0xA309        AI-10         IN-15         °C                          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                                                        Wärmeerzeuger".
+Funktionen Heizkessel   Modulationsgrad           0xA305        AI-129        IN-175        0..100 %                    Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                                                                                                                        Wärmeerzeuger".
+
+
+
+
+                                                                              BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                             3/31
+                                                                              Vitogate 300 Datenpunktliste
+
+
+        Gruppe            Datenpunktname         Technik-ID    BACnet-ID     Modbus-ID          Wertebereich                                        Datenpunktbeschreibung
+Funktionen Heizkreis   Betriebsart - bei       0xA400         MV-19        HO-74         0: HVAC_AUTO, 1:          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+A1/M1/HK1              externer Vorgabe                                                  HVAC_HEAT, 2:             Wärmeerzeuger".
+                       A1/M1/HK1                                                         HVAC_MRNG_WRMUP, 3:
+                                                                                         HVAC_COOL, 6: HVAC_OFF,
+                                                                                         7: HVAC_TEST, 8:
+                                                                                         HVAC_EMERG_HEAT, 10:
+                                                                                         HVAC_FREE_COOL, 12:
+                                                                                         HVAC_MAX_HEAT, 13:
+                                                                                         HVAC_ECONOMY, 14:
+                                                                                         HVAC_DEHUMID, 16:
+                                                                                         HVAC_EMERG_COOL, 100:
+                                                                                         HVAC_FLOW_TEMP, 255:
+                                                                                         HVAC_NUL
+
+Funktionen Heizkreis   Effektive               0xA406         AI-5         IN-7          0..35 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+A1/M1/HK1              Raumsolltemperatur                                                                          Wärmeerzeuger".
+                       A1/M1/HK1
+Funktionen Heizkreis   Externe                 0xA401         AV-39        HO-52         0..127 °C                 Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+A1/M1/HK1              Raumsolltemperatur                                                                          Wärmeerzeuger".
+                       A1/M1/HK1
+Funktionen Heizkreis   Externe                 0xA403         AV-1         HO-4          0..127 °C                 Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+A1/M1/HK1              Vorlaufsolltemperatur                                                                       Wärmeerzeuger".
+                       A1/M1/HK1
+Funktionen Heizkreis   Betriebsart - bei       0xA440         MV-18        HO-73         0: HVAC_AUTO, 1:          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M2/HK2                 externer Vorgabe                                                  HVAC_HEAT, 2:             Wärmeerzeuger".
+                       M2/HK2                                                            HVAC_MRNG_WRMUP, 3:
+                                                                                         HVAC_COOL, 6: HVAC_OFF,
+                                                                                         7: HVAC_TEST, 8:
+                                                                                         HVAC_EMERG_HEAT, 10:
+                                                                                         HVAC_FREE_COOL, 12:
+                                                                                         HVAC_MAX_HEAT, 13:
+                                                                                         HVAC_ECONOMY, 14:
+                                                                                         HVAC_DEHUMID, 16:
+                                                                                         HVAC_EMERG_COOL, 100:
+                                                                                         HVAC_FLOW_TEMP, 255:
+                                                                                         HVAC_NUL
+
+
+
+
+                                                                           BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                        4/31
+                                                                               Vitogate 300 Datenpunktliste
+
+
+        Gruppe             Datenpunktname        Technik-ID     BACnet-ID     Modbus-ID              Wertebereich                                     Datenpunktbeschreibung
+Funktionen Heizkreis   Effektive               0xA446         AI-6          IN-9          0..35 °C                   Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M2/HK2                 Raumsolltemperatur                                                                            Wärmeerzeuger".
+                       M2/HK2
+Funktionen Heizkreis   Externe                 0xA441         AV-40         HO-54         0..127 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M2/HK2                 Raumsolltemperatur                                                                            Wärmeerzeuger".
+                       M2/HK2
+Funktionen Heizkreis   Externe                 0xA443         AV-2          HO-5          0..127 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M2/HK2                 Vorlaufsolltemperatur                                                                         Wärmeerzeuger".
+                       M2/HK2
+Funktionen Heizkreis   Betriebsart - bei       0xA480         MV-17         HO-72         0: HVAC_AUTO, 1:           Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M3/HK3                 externer Vorgabe                                                   HVAC_HEAT, 2:              Wärmeerzeuger".
+                       M3/HK3                                                             HVAC_MRNG_WRMUP, 3:
+                                                                                          HVAC_COOL, 6: HVAC_OFF,
+                                                                                          7: HVAC_TEST, 8:
+                                                                                          HVAC_EMERG_HEAT, 10:
+                                                                                          HVAC_FREE_COOL, 12:
+                                                                                          HVAC_MAX_HEAT, 13:
+                                                                                          HVAC_ECONOMY, 14:
+                                                                                          HVAC_DEHUMID, 16:
+                                                                                          HVAC_EMERG_COOL, 100:
+                                                                                          HVAC_FLOW_TEMP, 255:
+                                                                                          HVAC_NUL
+
+Funktionen Heizkreis  Effektive                0xA486         AI-7          IN-11         0..35 °C                   Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M3/HK3                Raumsolltemperatur                                                                             Wärmeerzeuger".
+                      M3/HK3
+Funktionen Heizkreis  Externe                  0xA481         AV-41         HO-56         0..127 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M3/HK3                Raumsolltemperatur                                                                             Wärmeerzeuger".
+                      M3/HK3
+Funktionen Heizkreis  Externe                  0xA483         AV-3          HO-6          0..127 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+M3/HK3                Vorlaufsolltemperatur                                                                          Wärmeerzeuger".
+                      M3/HK3
+Funktionen Warmwasser Betriebsart -            0xA3C2         MV-20         HO-75         0: HVAC_AUTO, 1:        Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                      Warmwasser                                                          HVAC_HEAT, 2:           Wärmeerzeuger".
+                                                                                          HVAC_MRNG_WRMUP, 6:
+                                                                                          HVAC_OFF, 255: HVAC_NUL
+
+
+
+
+                                                                            BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                          5/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+        Gruppe            Datenpunktname      Technik-ID     BACnet-ID     Modbus-ID              Wertebereich                                    Datenpunktbeschreibung
+Funktionen Warmwasser Effektive Warmwasser- 0xA3C5         AI-2          IN-4          °C                        Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                      Solltemperatur                                                                             Wärmeerzeuger".
+
+Funktionen Warmwasser Warmwasser-           0xA3C0         AV-38         HO-50         0..90 °C                  Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+                      Solltemperatur                                                                             Wärmeerzeuger".
+Heizkreis A1/HK1      (2000) Raumtemperatur 0x2000         AV-10         HO-13         10..30 °C                 Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis A1/HK1 für witterungs- oder
+                      Soll Heizkreis A1/HK1                                                                      raumtemperaturgeführten Heiz- oder Kühlbetrieb (Normale Raumtemperatur), z. B. falls im
+                                                                                                                 Zeitprogramm Betriebsstatus "Normal" aktiv ist:
+                                                                                                                 Gilt für Raumbeheizung und Raumkühlung.
+Heizkreis A1/HK1      (2001) Red.               0x2001     AV-11         HO-14         10..30 °C                 Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis A1/HK1 für reduzierten Heizbetrieb
+                      Raumtemperatur Soll                                                                        (reduzierte Raumtemperatur), z. B. falls "Sparbetrieb" eingestellt oder im Zeitprogramm
+                      Heizkreis A1/HK1                                                                           Betriebsstatus "Reduziert" aktiv ist:
+                                                                                                                 Gilt nicht für Raumkühlung.
+Heizkreis A1/HK1      (2006) Niveau             0x2006     AV-9          HO-12         -15..40 K                 Niveau Heizkennlinie Heizkreis A1/HK1:
+                      Heizkennlinie Heizkreis                                                                    Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                      A1/HK1                                                                                     dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                                 angepasst werden.
+                                                                                                                 Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                                 Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                                 Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                                 Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                                 übernommen.
+
+Heizkreis A1/HK1      (2007) Neigung            0x2007     AV-8          HO-11         0..35                     Neigung Heizkennlinie Heizkreis A1/HK1:
+                      Heizkennlinie Heizkreis                                                                    Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                      A1/HK1                                                                                     dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                                 angepasst werden.
+                                                                                                                 Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                                 Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                                 Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                                 Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                                 übernommen.
+
+Heizkreis A1/HK1      (2022) Raumtemperatur 0x2022         AV-28         HO-35         10..30 °C                 Eingestellter Raumtemperatur-Sollwert für Partybetrieb Heiz-/Kühlkreis A1/HK1, z. B. falls
+                      im Partybetrieb                                                                            "Partybetrieb" eingestellt oder im Zeitprogramm Betriebsstatus "Partybetrieb" aktiv ist.
+                      Heizkreis A1/HK1
+
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                             6/31
+                                                                          Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname         Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                             Datenpunktbeschreibung
+Heizkreis A1/HK1   Bedarf Heizkreis A1/HK1 0x1180         MI-8         IN-62         0: Kein Bedarf, 1: Minimaler Wärme-/Kühlbedarf für Heiz-/Kühlkreis A1/HK1:
+                                                                                     Bedarf, 2: Geringer Bedarf, 3: Aus dem Bedarf wird ermittelt, welche Wärmequellen oder Kühlfunktionen zu welchem
+                                                                                     Mittlerer Bedarf, 4: Hoher     Zeitpunkt eingeschaltet werden.
+                                                                                     Bedarf, 5: Maximaler Bedarf
+
+
+
+Heizkreis A1/HK1   Bedienbetriebsart        0xB000        MV-6         HO-34         0: Abschaltbetrieb, 1: Nur Anzeige und Einstellung des Betriebsprogramms für Heizkreis A1/HK1:
+                   Heizkreis A1/HK1                                                  WW, 2: Heizen/Kühlen/WW, 0: Abschaltbetrieb (Frostschutz)
+                                                                                     4: Dauernd Reduziert, 5:   1: Nur Trinkwassererwärmung ("Nur Warmwasser")
+                                                                                     Dauernd Normal, 6: Normal 2: Raumbeheizung/-kühlung und Trinkwassererwärmung ("Heizen, Kühlen und WW")
+                                                                                     Abschalt, 7: Nur Kühlen
+
+
+
+Heizkreis A1/HK1   Betriebsmodus Heizkreis 0x1180         MI-7         IN-60         0: AUS, 1: Heizen, 2: Kühlen, Aktiver Betriebsmodus des Heizkreises A1/HK1:
+                   A1/HK1                                                            3: Auto                       0: Nur Frostschutz
+                                                                                                                   1: Raumbeheizung EIN
+                                                                                                                   2: Raumkühlung EIN
+                                                                                                                   3: Raumbeheizung oder Raumkühlung, abhängig von der Außentemperatur
+Heizkreis A1/HK1   Betriebsstatus Heizkreis 0x1180        MI-40        IN-140        0: Standby, 1: Reduziert, 2: Betriebsstatus Heiz-/Kühlkreis A1/HK1:
+                   A1/HK1                                                            Normal, 3: Festwert           0: Standby
+                                                                                                                   1: Reduziert
+                                                                                                                   2: Normal
+                                                                                                                   3: Festwert
+Heizkreis A1/HK1   Heizkreispumpe           0x048D        BI-9         ST-9          0: AUS, 1: EIN                Status der Heizkreispumpe A1/HK1:
+                   Heizkreis A1/HK1                                                                                0: Aus
+                                                                                                                   1: Ein
+Heizkreis A1/HK1   Neigung Kühlkennlinie    0x7111        AV-35        HO-43         0..3,5                        Neigung Kühlkennlinine Heiz-/Kühlkreis A1/HK1
+                   Heizkreis A1/HK1
+
+Heizkreis A1/HK1   Niveau Kühlkennlinie     0x7110        AV-32        HO-40         -15..40                     Niveau Kühlkennlinine Heiz-/Kühlkreis A1/HK1
+                   Heizkreis A1/HK1
+
+Heizkreis A1/HK1   Partybetrieb Heizkreis   0xB000        BV-6         CO-6          0: AUS, 1: EIN              Anzeige und Einstellung des Partybetriebs für Heiz-/Kühlkreis A1/HK1:
+                   A1/HK1                                                                                        0: Partybetrieb AUS
+                                                                                                                 1: Partybetrieb EIN
+                                                                                                                 Hinweis: Im Partybetrieb wirkt der hierfür eingestellte Raumtemperatur-Sollwert.
+
+
+
+
+                                                                       BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                       7/31
+                                                                             Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname           Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                  Datenpunktbeschreibung
+Heizkreis A1/HK1   Raumsolltemperatur        0x1180         AI-55         IN-61         °C                     Tatsächlich verwendeter Raumtemperatur-Sollwert Heiz-/Kühlkreis A1/HK1
+                   Heizkreis A1/HK1
+Heizkreis A1/HK1   Raumsolltemperatur        0x01DB         AI-87         IN-121        °C
+                   Heizkreis A1/HK1 von
+                   Fernbedienung
+Heizkreis A1/HK1   Raumtemperatur            0x01D6         AI-50         IN-55         °C                     Raumtemperatur-Istwert Heizkreis A1/HK1
+                   Heizkreis A1/HK1
+Heizkreis A1/HK1   Sparbetrieb Heizkreis     0xB000         BV-9          CO-9          0: AUS, 1: EIN         Anzeige und Einstellung des Sparbetriebs für Heiz-/Kühlkreis A1/HK1:
+                   A1/HK1                                                                                      0: Sparbetrieb AUS
+                                                                                                               1: Sparbetrieb EIN
+                                                                                                               Hinweis: Im Sparbetrieb wirkt der reduzierte Raumtemperatur-Sollwert.
+Heizkreis A1/HK1   Vorlauftemperatur         0x01C5         AI-72         IN-95         °C                     Vorlauftemperatur-Istwert Sekundärkreis:
+                   Sekundär 1                                                                                  Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+Heizkreis A1/HK1   Vorlauftemperatur         0x01F0         AI-145        IN-194        °C                     Vorlauftemperatur Sekundärkreis Wärmepumpe 2. Stufe
+                   Sekundär 2
+Heizkreis A1/HK1   Vorlauftemperatur-        0x1800         AI-93         IN-130        °C                     Vorlauftemperatur-Sollwert Heiz-/Kühlkreis A1/HK1:
+                   Sollwert Heizkreis                                                                          - Witterungsgeführte Regelung: Aus Heiz- oder Kühlkennlinie ermittelt
+                   A1/HK1                                                                                      - Raumtemperaturgeführte Regelung: Aus Raumtemperatur-Sollwert und -Istwert ermittelt
+
+Heizkreis M2/HK2   (3000) Raumtemperatur 0x3000             AV-14         HO-17         10..30 °C              Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis M2/HK2 für witterungs- oder
+                   Soll Heizkreis M2/HK2                                                                       raumtemperaturgeführten Heiz- oder Kühlbetrieb (Normale Raumtemperatur), z. B. falls im
+                                                                                                               Zeitprogramm Betriebsstatus "Normal" aktiv ist:
+                                                                                                               Gilt für Raumbeheizung und Raumkühlung.
+Heizkreis M2/HK2   (3001) Red.               0x3001         AV-15         HO-18         10..30 °C              Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis M2/HK2 für reduzierten Heizbetrieb
+                   Raumtemperatur Soll                                                                         (reduzierte Raumtemperatur), z. B. falls "Sparbetrieb" eingestellt oder im Zeitprogramm
+                   Heizkreis M2/HK2                                                                            Betriebsstatus "Reduziert" aktiv ist:
+                                                                                                               Gilt nicht für Raumkühlung.
+Heizkreis M2/HK2   (3006) Niveau             0x3006         AV-13         HO-16         -15..40 K              Niveau Heizkennlinie Heizkreis M2/HK2:
+                   Heizkennlinie Heizkreis                                                                     Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   M2/HK2                                                                                      dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                               angepasst werden.
+                                                                                                               Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                               Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                               Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                               Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                               übernommen.
+
+
+
+
+                                                                          BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                    8/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname           Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Heizkreis M2/HK2   (3007) Neigung            0x3007         AV-12        HO-15         0..35                       Neigung Heizkennlinie Heizkreis M2/HK2:
+                   Heizkennlinie Heizkreis                                                                         Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   M2/HK2                                                                                          dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                                   angepasst werden.
+                                                                                                                   Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                                   Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                                   Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                                   Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                                   übernommen.
+
+Heizkreis M2/HK2   (3022) Raumtemperatur 0x3022             AV-29        HO-36         10..30 °C                   Eingestellter Raumtemperatur-Sollwert für Partybetrieb Heiz-/Kühlkreis M2/HK2, z. B. falls
+                   im Partybetrieb                                                                                 "Partybetrieb" eingestellt oder im Zeitprogramm Betriebsstatus "Partybetrieb" aktiv ist.
+                   Heizkreis M2/HK2
+
+Heizkreis M2/HK2   Bedarf Heizkreis          0x1181         MI-10        IN-65         0: Kein Bedarf, 1: Minimaler Wärme-/Kühlbedarf für Heiz-/Kühlkreis M2/HK2:
+                   M2/HK2                                                              Bedarf, 2: Geringer Bedarf, 3: Aus dem Bedarf wird ermittelt, welche Wärmequellen oder Kühlfunktionen zu welchem
+                                                                                       Mittlerer Bedarf, 4: Hoher     Zeitpunkt eingeschaltet werden.
+                                                                                       Bedarf, 5: Maximaler Bedarf
+
+
+
+Heizkreis M2/HK2   Bedienbetriebsart         0xB001         MV-4         HO-32         0: Abschaltbetrieb, 1: Nur Anzeige und Einstellung des Betriebsprogramms für Heizkreis M2/HK2:
+                   Heizkreis M2/HK2                                                    WW, 2: Heizen/Kühlen/WW, 0: Abschaltbetrieb (Frostschutz)
+                                                                                       4: Dauernd Reduziert, 5:   1: Nur Trinkwassererwärmung ("Nur Warmwasser")
+                                                                                       Dauernd Normal, 6: Normal 2: Raumbeheizung/-kühlung und Trinkwassererwärmung ("Heizen, Kühlen und WW")
+                                                                                       Abschalt, 7: Nur Kühlen
+
+
+
+Heizkreis M2/HK2   Betriebsmodus Heizkreis 0x1181           MI-9         IN-64         0: AUS, 1: Heizen, 2: Kühlen, Aktiver Betriebsmodus des Heizkreises M2/HK2:
+                   M2/HK2                                                              3: Auto                       0: Nur Frostschutz
+                                                                                                                     1: Raumebeheizung EIN
+                                                                                                                     2: Raumkühlung EIN
+                                                                                                                     3: Raumbeheizung oder Raumkühlung, abhängig von der Außentemperatur
+Heizkreis M2/HK2   Betriebsstatus Heizkreis 0x1181          MI-41        IN-141        0: Standby, 1: Reduziert, 2: Betriebsstatus Heiz-/Kühlkreis M2/HK2:
+                   M2/HK2                                                              Normal, 3: Festwert           0: Standby
+                                                                                                                     1: Reduziert
+                                                                                                                     2: Normal
+                                                                                                                     3: Festwert
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                           9/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname          Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                     Datenpunktbeschreibung
+Heizkreis M2/HK2   Heizkreispumpe           0x048E         BI-10         ST-10         0: AUS, 1: EIN         Status der Heizkreispumpe M2/HK2:
+                   Heizkreis M2/HK2                                                                           0: Aus
+                                                                                                              1: Ein
+Heizkreis M2/HK2   Neigung Kühlkennlinie    0x7111         AV-36         HO-44         0..3,5                 Neigung Kühlkennlinine Heiz-/Kühlkreis M2/HK2
+                   Heizkreis M2/HK2
+
+Heizkreis M2/HK2   Niveau Kühlkennlinie     0x7110         AV-33         HO-41         -15..40                Niveau Kühlkennlinine Heiz-/Kühlkreis M2/HK2
+                   Heizkreis M2/HK2
+
+Heizkreis M2/HK2   Partybetrieb Heizkreis   0xB001         BV-7          CO-7          0: AUS, 1: EIN         Anzeige und Einstellung des Partybetriebs für Heiz-/Kühlkreis M2/HK2:
+                   M2/HK2                                                                                     0: Partybetrieb AUS
+                                                                                                              1: Partybetrieb EIN
+                                                                                                              Hinweis: Im Partybetrieb wirkt der hierfür eingestellte Raumtemperatur-Sollwert.
+
+Heizkreis M2/HK2   Raumsolltemperatur       0x1181         AI-56         IN-63         °C                     Tatsächlich verwendeter Raumtemperatur-Sollwert Heiz-/Kühlkreis M2/HK2
+                   Heizkreis M2/HK2
+Heizkreis M2/HK2   Raumsolltemperatur       0x01DC         AI-88         IN-123        °C
+                   Heizkreis M2/HK2 von
+                   Fernbedienung
+Heizkreis M2/HK2   Raumtemperatur           0x01D7         AI-51         IN-56         °C                     Raumtemperatur-Istwert Heizkreis M2/HK2
+                   Heizkreis M2/HK2
+Heizkreis M2/HK2   Sparbetrieb Heizkreis    0xB001         BV-10         CO-10         0: AUS, 1: EIN         Anzeige und Einstellung des Sparbetriebs für Heiz-/Kühlkreis M2/HK2:
+                   M2/HK2                                                                                     0: Sparbetrieb AUS
+                                                                                                              1: Sparbetrieb EIN
+                                                                                                              Hinweis: Im Sparbetrieb wirkt der reduzierte Raumtemperatur-Sollwert.
+Heizkreis M2/HK2   Vorlauftemperatur        0x01D4         AI-85         IN-117        °C                     Vorlauftemperatur-Istwert Heiz-/Kühlkreis M2/HK2
+                   Heizkreis M2/HK2
+Heizkreis M2/HK2   Vorlauftemperatur-       0x1801         AI-94         IN-131        °C                     Vorlauftemperatur-Sollwert Heiz-/Kühlkreis M2/HK2:
+                   Sollwert Heizkreis                                                                         - Witterungsgeführte Regelung: Aus Heiz- oder Kühlkennlinie ermittelt
+                   M2/HK2                                                                                     - Raumtemperaturgeführte Regelung: Aus Raumtemperatur-Sollwert und -Istwert ermittelt
+
+Heizkreis M3/HK3   (4000) Raumtemperatur 0x4000            AV-18         HO-21         10..30 °C              Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis M3/HK3 für witterungs- oder
+                   Soll Heizkreis M3/HK3                                                                      raumtemperaturgeführten Heiz- oder Kühlbetrieb (Normale Raumtemperatur), z. B. falls im
+                                                                                                              Zeitprogramm Betriebsstatus "Normal" aktiv ist:
+                                                                                                              Gilt für Raumbeheizung und Raumkühlung.
+
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                 10/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname           Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                              Datenpunktbeschreibung
+Heizkreis M3/HK3   (4001) Red.               0x4001         AV-19        HO-22         10..30 °C                   Eingestellter Raumtemperatur-Sollwert Heiz-/Kühlkreis M3/HK3 für reduzierten Heizbetrieb
+                   Raumtemperatur Soll                                                                             (reduzierte Raumtemperatur), z. B. falls "Sparbetrieb" eingestellt oder im Zeitprogramm
+                   Heizkreis M3/HK3                                                                                Betriebsstatus "Reduziert" aktiv ist:
+                                                                                                                   Gilt nicht für Raumkühlung.
+Heizkreis M3/HK3   (4006) Niveau             0x4006         AV-17        HO-20         -15..40 K                   Niveau Heizkennlinie Heizkreis M3/HK3:
+                   Heizkennlinie Heizkreis                                                                         Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   M3/HK3                                                                                          dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                                   angepasst werden.
+                                                                                                                   Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                                   Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                                   Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                                   Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                                   übernommen.
+
+Heizkreis M3/HK3   (4007) Neigung            0x4007         AV-16        HO-19         0..35                       Neigung Heizkennlinie Heizkreis M3/HK3:
+                   Heizkennlinie Heizkreis                                                                         Die Heizkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   M3/HK3                                                                                          dem Einstellen von Niveau und Neigung kann die Heizkennlinie an das Gebäude und die Anlage
+                                                                                                                   angepasst werden.
+                                                                                                                   Im witterungsgeführten Heizbetrieb wird der aus der Heizkennlinie ermittelte Wert für die
+                                                                                                                   Vorlauftemperatur direkt als Sollwert für den Heizkreis übernommen.
+                                                                                                                   Hinweis: Bei Eingabe eines Sollwerts über die Viessmann LON-Schnittstelle wird die
+                                                                                                                   Sollwertänderung von der Regelung nur graduell und mit einer zeitlichen Verzögerung
+                                                                                                                   übernommen.
+
+Heizkreis M3/HK3   (4022) Raumtemperatur 0x4022             AV-30        HO-37         10..30 °C                   Eingestellter Raumtemperatur-Sollwert für Partybetrieb Heiz-/Kühlkreis M3/HK3, z. B. falls
+                   im Partybetrieb                                                                                 "Partybetrieb" eingestellt oder im Zeitprogramm Betriebsstatus "Partybetrieb" aktiv ist.
+                   Heizkreis M3/HK3
+
+Heizkreis M3/HK3   Bedarf Heizkreis          0x1182         MI-12        IN-68         0: Kein Bedarf, 1: Minimaler Wärme-/Kühlbedarf für Heiz-/Kühlkreis M3/HK3:
+                   M3/HK3                                                              Bedarf, 2: Geringer Bedarf, 3: Aus dem Bedarf wird ermittelt, welche Wärmequellen oder Kühlfunktionen zu welchem
+                                                                                       Mittlerer Bedarf, 4: Hoher     Zeitpunkt eingeschaltet werden.
+                                                                                       Bedarf, 5: Maximaler Bedarf
+
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                          11/31
+                                                                           Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname          Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                          Datenpunktbeschreibung
+Heizkreis M3/HK3   Bedienbetriebsart        0xB002         MV-5         HO-33         0: Abschaltbetrieb, 1: Nur Anzeige und Einstellung des Betriebsprogramms für Heizkreis M3/HK3:
+                   Heizkreis M3/HK3                                                   WW, 2: Heizen/Kühlen/WW, 0: Abschaltbetrieb (Frostschutz)
+                                                                                      4: Dauernd Reduziert, 5:   1: Nur Trinkwassererwärmung ("Nur Warmwasser")
+                                                                                      Dauernd Normal, 6: Normal 2: Raumbeheizung/-kühlung und Trinkwassererwärmung ("Heizen, Kühlen und WW")
+                                                                                      Abschalt, 7: Nur Kühlen
+
+
+
+Heizkreis M3/HK3   Betriebsmodus Heizkreis 0x1182          MI-11        IN-66         0: AUS, 1: Heizen, 2: Kühlen, Aktiver Betriebsmodus des Heizkreises M3/HK3:
+                   M3/HK3                                                             3: Auto                       0: Nur Frostschutz
+                                                                                                                    1: Raumbeheizung EIN
+                                                                                                                    2: Raumkühlung EIN
+                                                                                                                    3: Raumbeheizung oder Raumkühlung, abhängig von der Außentemperatur
+Heizkreis M3/HK3   Betriebsstatus Heizkreis 0x1182         MI-42        IN-142        0: Standby, 1: Reduziert, 2: Betriebsstatus Heiz-/Kühlkreis M3/HK3:
+                   M3/HK3                                                             Normal, 3: Festwert           0: Standby
+                                                                                                                    1: Reduziert
+                                                                                                                    2: Normal
+                                                                                                                    3: Festwert
+Heizkreis M3/HK3   Heizkreispumpe           0x048F         BI-11        ST-11         0: AUS, 1: EIN                Status der Heizkreispumpe M3/HK3:
+                   Heizkreis M3/HK3                                                                                 0: Aus
+                                                                                                                    1: Ein
+Heizkreis M3/HK3   Neigung Kühlkennlinie    0x7111         AV-37        HO-45         0..3,5                        Neigung Kühlkennlinine Heiz-/Kühlkreis M3/HK3
+                   Heizkreis M3/HK3
+
+Heizkreis M3/HK3   Niveau Kühlkennlinie     0x7110         AV-34        HO-42         -15..40                    Niveau Kühlkennlinine Heiz-/Kühlkreis M3/HK3
+                   Heizkreis M3/HK3
+
+Heizkreis M3/HK3   Partybetrieb Heizkreis   0xB002         BV-8         CO-8          0: AUS, 1: EIN             Anzeige und Einstellung des Partybetriebs für Heiz-/Kühlkreis M3/HK3:
+                   M3/HK3                                                                                        0: Partybetrieb AUS
+                                                                                                                 1: Partybetrieb EIN
+                                                                                                                 Hinweis: Im Partybetrieb wirkt der hierfür eingestellte Raumtemperatur-Sollwert.
+
+Heizkreis M3/HK3   Raumsolltemperatur       0x1182         AI-57        IN-67         °C                         Tatsächlich verwendeter Raumtemperatur-Sollwert Heiz-/Kühlkreis M3/HK3
+                   Heizkreis M3/HK3
+Heizkreis M3/HK3   Raumsolltemperatur       0x01DD         AI-89        IN-125        °C
+                   Heizkreis M3/HK3 von
+                   Fernbedienung
+Heizkreis M3/HK3   Raumtemperatur           0x01D8         AI-52        IN-57         °C                         Raumtemperatur-Istwert Heizkreis M3/HK3
+                   Heizkreis M3/HK3
+
+
+                                                                        BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                   12/31
+                                                                          Vitogate 300 Datenpunktliste
+
+
+         Gruppe       Datenpunktname         Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                          Datenpunktbeschreibung
+Heizkreis M3/HK3   Sparbetrieb Heizkreis   0xB002         BV-11        CO-11         0: AUS, 1: EIN             Anzeige und Einstellung des Sparbetriebs für Heiz-/Kühlkreis M3/HK3:
+                   M3/HK3                                                                                       0: Sparbetrieb AUS
+                                                                                                                1: Sparbetrieb EIN
+                                                                                                                Hinweis: Im Sparbetrieb wirkt der reduzierte Raumtemperatur-Sollwert.
+Heizkreis M3/HK3   Vorlauftemperatur       0x01D5         AI-86        IN-119        °C                         Vorlauftemperatur-Istwert Heiz-/Kühlkreis M3/HK3
+                   Heizkreis M3/HK3
+Heizkreis M3/HK3   Vorlauftemperatur-      0x1802         AI-95        IN-132        °C                         Vorlauftemperatur-Sollwert Heiz-/Kühlkreis M3/HK3:
+                   Sollwert Heizkreis                                                                           - Witterungsgeführte Regelung: Aus Heiz- oder Kühlkennlinie ermittelt
+                   M3/HK3                                                                                       - Raumtemperaturgeführte Regelung: Aus Raumtemperatur-Sollwert und -Istwert ermittelt
+
+Kühlkreis          Betriebsmodus           0x1183         MI-16        IN-74         0: AUS, 1: Heizen, 2: Kühlen, Aktiver Betriebsmodus des separaten Kühlkreises:
+                   Kühlkreis                                                         3: Auto                       0: Nur Frostschutz
+                                                                                                                   1: Raumbeheizung ein
+                                                                                                                   2: Raumkühlung ein
+                                                                                                                   3: Raumbeheizung oder Raumkühlung, abhängig von der Außentemperatur
+Kühlkreis          Raumtemperatur          0x01DA         AI-54        IN-59         °C
+                   Kühlkreis
+Kühlkreis          Solltemperatur          0x1183         AI-60        IN-75         °C
+                   Kühlkreis
+Kühlung            (7110) Niveau           0x7110         AV-21        HO-24         -15..40                    Die Kühlkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   Kühlkennlinie Kühlkreis                                                                      dem Einstellen von Niveau und Neigung kann die Kühlkennlinie an das Gebäude und die Anlage
+                                                                                                                angepasst werden.
+                                                                                                                Im witterungsgeführten Kühlbetrieb wird der aus der Kühlkennlinie ermittelte Wert für die
+                                                                                                                Vorlauftemperatur direkt als Sollwert für den Kühlkreis übernommen.
+                                                                                                                Bei Eingabe eines Sollwerts über die Vi-LON Schnittstelle wird die Sollwertveränderung von der
+                                                                                                                Regelung nur graduell und mit einer zeitlicher Verzögerung übernommen.
+
+
+
+Kühlung            (7111) Neigung          0x7111         AV-20        HO-23         0..3,5                     Die Kühlkennlinie zeigt die Abhängigkeit der Vorlauftemperatur von der Außentemperatur. Mit
+                   Kühlkennlinie Kühlkreis                                                                      dem Einstellen von Niveau und Neigung kann die Kühlkennlinie an das Gebäude und die Anlage
+                                                                                                                angepasst werden.
+                                                                                                                Im witterungsgeführten Kühlbetrieb wird der aus der Kühlkennlinie ermittelte Wert für die
+                                                                                                                Vorlauftemperatur direkt als Sollwert für den Kühlkreis übernommen.
+                                                                                                                Bei Eingabe eines Sollwerts über die Vi-LON Schnittstelle wird die Sollwertveränderung von der
+                                                                                                                Regelung nur graduell und mit einer zeitlicher Verzögerung übernommen.
+
+
+
+
+                                                                       BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                      13/31
+                                                                          Vitogate 300 Datenpunktliste
+
+
+          Gruppe       Datenpunktname        Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Kühlung             Bedarf Kühlkreis       0x1183         MI-17        IN-76         0: Kein Bedarf, 1: Minimaler Aus dem Bedarf wird ermittelt, welche Kühlfunktion zu welchem Zeitpunkt eingeschaltet wird.
+                                                                                     Bedarf, 2: Geringer Bedarf, 3:
+                                                                                     Mittlerer Bedarf, 4: Hoher
+                                                                                     Bedarf, 5: Maximaler Bedarf
+
+
+
+Kühlung Heizkreis   Vorlauftemperatur      0x01D9         AI-53        IN-58         °C                             Vorlauftemperatur-Istwert separater Kühlkreis:
+A1/HK1              Kühlkreis                                                                                       Wert nur vorhanden, falls Kühlung aktiv ist.
+Lüftung             Ablufttemperatur       0x0A02         AI-139       IN-186        °C
+Lüftung             Außenlufttemperatur    0x0A00         AI-133       IN-180        °C
+
+Lüftung             Betriebsprogramm       0x0A7E         MI-49        IN-187        0: Nicht definiert, 1: Notlauf,
+                                                                                     2: Frostschutz, 3:
+                                                                                     Estrichtrocknung, 4:
+                                                                                     Intensivbetrieb, 5:
+                                                                                     Ferienprogramm, 1:
+                                                                                     Sparbetrieb, 7:
+                                                                                     Lüftungsautomatik, 8:
+                                                                                     Abschaltbetrieb, 9:
+                                                                                     Grundbetrieb
+Lüftung             Betriebsprogramm       0xB005         MV-14        HO-61         0: Abschaltbetrieb, 1:
+                                                                                     Grundbetrieb, 2:
+                                                                                     Lüftungsautomatik
+Lüftung             Betriebsstatus         0x11A8         MI-52        IN-196        Grundlüftung, Reduzierte        Betriebsstatus Lüftung
+                                                                                     Lüftung, Nennlüftung,
+                                                                                     Intensivlüftung,
+                                                                                     Abschaltbetrieb
+
+Lüftung             CO2                    0x0A07         AI-136       IN-183        %                              CO2 Wert Eingang
+Lüftung             Elektrisches           0x0A0C         AI-131       IN-178        %
+                    Vorheizregister
+Lüftung             Feuchte                0x0A06         AI-130       IN-177        %
+Lüftung             Filterstandzeit Tage   0x0A0E         AI-132       IN-179        1..31 Tage                     Zeit bis der Filteralarm auslöst (Tage)
+Lüftung             Fortlufttemperatur     0x0A03         AI-134       IN-181        °C
+Lüftung             Grundbetrieb           0xB005         AV-45        CO-19         0: AUS, 1: EIN
+Lüftung             Intensivbetrieb        0xB005         BV-18        CO-18         0: AUS, 1: EIN
+Lüftung             Raumtemp. Soll         0x7D08         AV-46        CO-20         10..30 °C                      Raumsolltemperatur Lüftung
+
+
+
+                                                                       BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                      14/31
+                                                                              Vitogate 300 Datenpunktliste
+
+
+          Gruppe          Datenpunktname        Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                              Datenpunktbeschreibung
+Lüftung               Raumtemperatur-         0x0A15         AI-140        IN-189        °C                              Raumtemperatur-Sollwert Lüftung
+                      Sollwert T-ABL-Soll
+Lüftung               Volumenstrom Fortluft   0x0A05         AI-135        IN-182        m³/h
+
+Lüftung               Volumenstrom Zuluft     0x0A04         AI-138        IN-185        m³/h
+
+Lüftung               Zulufttemperatur       0x0A01          AI-137        IN-184        °C
+Schaltzyklen Anlage   Ausgang Abtauung aktiv 0xB446          AI-128        IN-174        0: AUS, 1: Abtauung aktiv       Status des Kältekreises bei Luft/Wasser-Wärmepumpen:
+                                                                                                                         0: Abtauen AUS
+                                                                                                                         1: Abtauen EIN
+Schaltzyklen Anlage   Drehzahl Ventilator 1   0x02C0         AI-125        IN-171        U/min
+
+Schaltzyklen Anlage   Drehzahl Ventilator 2   0x02C1         AI-126        IN-172        U/min
+
+Schaltzyklen WP       Anzahl Einschalt.       0x0500         AI-41         IN-46                                         Anzahl der Einschaltvorgänge des Verdichters:
+                      Verdichter                                                                                         - Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                                                         - Bei Wärmepumpen mit 2-stufigem Kältekreis für Verdichter 1
+                                                                                                                         Gemessen ab der Erstinbetriebnahme der Wärmepumpe.
+Schaltzyklen WP       Anzahl Einschalt.       0x0501         AI-42         IN-47                                         Anzahl der Einschaltvorgänge des Verdichters für die Wärmepumpe 2. Stufe oder des
+                      Verdichter 2                                                                                       Verdichters 2 bei Wärmepumpen mit 2-stufigem Kältekreis:
+                                                                                                                         Gemessen ab der Erstinbetriebnahme der Wärmepumpe.
+Sensorstatus 1        Raumsolltemperatur      0x01DB         MI-36         IN-122        0: Sensor OK, 1: Sensor
+                      Heizkreis A1/HK1                                                   Kurzschluss, 2: Sensor
+                                                                                         Unterbrechung, 3: Sensor
+                                                                                         Referenzfehler, 4: Sensor
+                                                                                         Referenz unter Min, 5:
+                                                                                         Sensor Referenz über Max, 6:
+                                                                                         Sensor nicht vorhanden, 7:
+                                                                                         Sensor Check, 8: Sensor
+                                                                                         Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                           BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                            15/31
+                                                                       Vitogate 300 Datenpunktliste
+
+
+        Gruppe        Datenpunktname      Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                          Datenpunktbeschreibung
+Sensorstatus 1     Raumsolltemperatur   0x01DC         MI-37        IN-124        0: Sensor OK, 1: Sensor
+                   Heizkreis M2/HK2                                               Kurzschluss, 2: Sensor
+                                                                                  Unterbrechung, 3: Sensor
+                                                                                  Referenzfehler, 4: Sensor
+                                                                                  Referenz unter Min, 5:
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Raumsolltemperatur   0x01DD         MI-38        IN-126        0: Sensor OK, 1: Sensor
+                   Heizkreis M3/HK3                                               Kurzschluss, 2: Sensor
+                                                                                  Unterbrechung, 3: Sensor
+                                                                                  Referenzfehler, 4: Sensor
+                                                                                  Referenz unter Min, 5:
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Raumtemperatur       0x01D6         MI-19        IN-85         0: Sensor OK, 1: Sensor       Status des Raumtemperatursensors für den Heizkreis A1/HK1:
+                   Heizkreis A1/HK1                                               Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                  Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                  Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                  Referenz unter Min, 5:
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                    BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                            16/31
+                                                                       Vitogate 300 Datenpunktliste
+
+
+        Gruppe        Datenpunktname      Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Sensorstatus 1     Raumtemperatur       0x01DA         MI-48        IN-176        0: Sensor OK, 1: Sensor       Status des Sensors
+                   Kühlkreis                                                      Kurzschluss, 2: Sensor
+                                                                                  Unterbrechung, 3: Sensor
+                                                                                  Referenzfehler, 4: Sensor
+                                                                                  Referenz unter Min, 5:
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Rücklauftemperatur   0x01C4         MI-24        IN-94         0: Sensor OK, 1: Sensor       Status der Rücklauftemperatursensors Primärkreis oder des Luftaustrittstemperatursensors:
+                   Primärquelle                                                   Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                  Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                  Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                  Referenz unter Min, 5:        Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Rücklauftemperatur   0x01C6         MI-25        IN-97         0: Sensor OK, 1: Sensor       Status des Rücklauftemperatursensors Sekundärkreis:
+                   Sekundär 1                                                     Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                  Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                  Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                  Referenz unter Min, 5:        Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                  Sensor Referenz über Max, 6:
+                                                                                  Sensor nicht vorhanden, 7:
+                                                                                  Sensor Check, 8: Sensor
+                                                                                  Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                    BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                    17/31
+                                                                         Vitogate 300 Datenpunktliste
+
+
+        Gruppe        Datenpunktname        Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Sensorstatus 1     Rücklauftemperatur     0x01C7         MI-26        IN-99         0: Sensor OK, 1: Sensor       Status des Rücklauftemperatursensors Sekundärkreis für die Wärmepumpe 2. Stufe:
+                   Sekundär 2                                                       Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                    Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                    Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                    Referenz unter Min, 5:
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Status Sensor Sekundär- 0x01F0        MI-50        IN-188        0: Sensor OK, 1: Sensor
+                   Vorlauf 2                                                        Kurzschluss, 2: Sensor
+                                                                                    Unterbrechung, 3: Sensor
+                                                                                    Referenzfehler, 4: Sensor
+                                                                                    Referenz unter Min, 5:
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+Sensorstatus 1     Vorlauftemperatur      0x01C3         MI-23        IN-92         0: Sensor OK, 1: Sensor       Status der Vorlauftemperatursensors Primärkreis oder des Lufteintrittstemperatursensors:
+                   Primärquelle                                                     Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                    Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                    Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                    Referenz unter Min, 5:        Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                      BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                       18/31
+                                                                           Vitogate 300 Datenpunktliste
+
+
+        Gruppe        Datenpunktname          Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Sensorstatus 1     Vorlauftemperatur        0x01C5         MI-47        IN-163        0: Sensor OK, 1: Sensor       Status des Vorlauftemperatursensors Sekundärkreis:
+                   Sekundär 1                                                         Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                      Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                      Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                      Referenz unter Min, 5:        Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                      Sensor Referenz über Max, 6:
+                                                                                      Sensor nicht vorhanden, 7:
+                                                                                      Sensor Check, 8: Sensor
+                                                                                      Fehler, 9: Sensor Kom. Fehler
+
+
+
+Signaleingänge     EVU-Sperre               0x03C3         BI-61        ST-61         0: AUS, 1: EIN
+Solar              Kollektortemperatur      0x01D1         AI-82        IN-111        °C                          Kollektortemperatur-Istwert
+                   Solar
+Solar              Rücklauftemperatur       0x01D2         AI-83        IN-113        °C                          Rücklauftemperatur-Istwert Solarkreis
+                   Solar
+Solar              Solarenergie             0x190A         AI-43        IN-48         kWh                         In den Speicher-Wassererwärmer eingespeister Solarenergieertrag in kWh:
+                                                                                                                  Gemessen ab der Erstinbetriebnahme der Solaranlage
+Solar              Solarpumpe (int.         0x0493         BI-20        ST-20         0: AUS, 1: EIN              Status der Solarkreispumpe bei interner Solarregelung (in die Wärmepumpenregelung
+                   Solarregelung)                                                                                 integriert):
+                                                                                                                  0: Aus
+                                                                                                                  1: Ein
+Solar              Solarpumpe (Vitosolic)   0x04A0         BI-21        ST-21         0: AUS, 1: EIN              Status der Solarkreispumpe bei Verwendung der externen Solarregelung Vitosolic:
+                                                                                                                  0: Aus
+                                                                                                                  1: Ein
+
+Solar              Speichertemperatur       0x01D3         AI-84        IN-115        °C                          Speichertemperatur-Istwert Solarkreis
+                   Solar
+
+
+
+
+                                                                        BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                     19/31
+                                                                           Vitogate 300 Datenpunktliste
+
+
+       Gruppe         Datenpunktname          Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                              Datenpunktbeschreibung
+Temperaturen       Sensor-Status Leistung   0xB423         MI-53        IN-197        0: Sensor OK, 1: Sensor
+                   Verdichter                                                         Kurzschluss, 2: Sensor
+                                                                                      Unterbrechung, 3: Sensor
+                                                                                      Referenzfehler, 4: Sensor
+                                                                                      Referenz unter Min, 5:
+                                                                                      Sensor Referenz über Max, 6:
+                                                                                      Sensor nicht vorhanden, 7:
+                                                                                      Sensor Check, 8: Sensor
+                                                                                      Fehler, 9: Sensor Kom. Fehler
+
+
+
+Timer              Mindestlaufzeit externer 0x1386         AI-127       IN-173        Sekunden
+                   Wärmeerzeuger
+
+Verdichter 1       (5030) Leistung          0x5030         AV-23        HO-27         1..255                          Wärmeleistung des Verdichters gemäß Typenschild:
+                   Verdichterstufe                                                                                    - Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+                                                                                                                      - Bei Wärmepumpen mit 2-stufigem Kältekreis für beide Verdichter
+                                                                                                                      Falsche Angaben führen zu einer fehlerhaften Energiebilanz.
+Verdichter 2       (5130) Verdichter2       0x5130         AV-24        HO-28         1..255                          Wärmeleistung des Verdichters für die Wärmepumpe 2. Stufe gemäß Typenschild.
+                   Leistung Verdichter                                                                                Falsche Angaben führen zu einer fehlerhaften Energiebilanz.
+
+Wärmemanagement    Gas Normaltarif          0x7BEB         AV-50        HO-66         0..32767 ct / kWh               Gaspreis für 1 kWh oder Ölpreis für 1 l Heizöl, abhängig ob ein Gas- oder Öl-Brennwertmodul im
+                                                                                                                      Hybrid-Gerät eingebaut ist.
+                                                                                                                      Diese Angabe ist erforderlich, falls ökonomischer Betrieb eingestellt ist.
+Wärmemanagement    Komfortbetrieb           0x7BE0         BV-19        CO-21         0: AUS, 1: EIN                  Komfortbetrieb (nur für Hybrid-Kompaktgeräte):
+                                                                                                                      Bei hohem Warmwasserbedarf wird zusätzlich zum Wärmepumpenmodul das
+                                                                                                                      Brennwertwertmodul eingeschaltet.
+                                                                                                                      0: Komfortbetrieb AUS
+                                                                                                                      1: Komfortbetrieb EIN
+Wärmemanagement    Primärenergiefaktor Gas 0x7BE5          AV-52        HO-68                                         Der Primärenergiefaktor Fossil gibt das Mengenverhältnis an von eingesetzter Primärenergie
+                                                                                                                      zur erzeugten thermischen Energie.
+                                                                                                                      Der Primärenergiefaktor hängt vom Energieträger ab, aus dem die thermische Energie erzeugt
+                                                                                                                      wird.
+
+
+
+
+                                                                        BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                           20/31
+                                                                        Vitogate 300 Datenpunktliste
+
+
+      Gruppe           Datenpunktname      Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                            Datenpunktbeschreibung
+Wärmemanagement    Primärenergiefaktor   0x7BE4         AV-51        HO-67                                    Der Primärenergiefaktor Strom gibt das Mengenverhältnis an von eingesetzter Primärenergie
+                   Strom                                                                                      (z. B. Menge fossiler Brennstoff zur Erzeugung von Strom) zur thermischen Energie der
+                                                                                                              Wärmepumpe.
+                                                                                                              Der Primärenergiefaktor hängt ab von folgenden Faktoren:
+                                                                                                              - Energieträger, aus dem die elektrische Energie für den Betrieb der Wärmepumpe erzeugt
+                                                                                                              wird.
+                                                                                                              - COP der Wärmepumpe
+Wärmemanagement    Regelstrategie WE     0x7BE1         MV-15        HO-62         Ökonomisch, Ökologisch,    Strategie für die Freigabe von Wärmepumpenmodul und/oder Brennwertmodul bei Hybrid-
+                                                                                   Feste Temperatur           Geräten: Die Freigabe der Wärmequellen erfolgt in Abhängigkeit von der Außentemperatur. Die
+                                                                                                              Temperaturgrenzen für die Freigabe werden nach folgenden Gesichtspunkten ermittelt:
+                                                                                                              0: Ökonomisch
+                                                                                                              1: Ökologisch
+                                                                                                              2: Feste Temperatur
+
+Wärmemanagement    Strom Normaltarif     0x7BE8         AV-47        HO-63         0..32767 ct / kWh          Strompreis für 1 kWh im normalen Stromtarif:
+                                                                                                              Diese Angabe ist erforderlich, falls ökonomischer Betrieb eingestellt ist.
+Wärmepumpe         3-Wege-Ventil         0x0494         BI-2         ST-2          0: Heizen, 1: Warmwasser   Status der Umwälzpumpe zur Speicherbeheizung oder des 3-Wege-Umschaltventils
+                   Heizen/WW1                                                                                 "Heizen/Trinkwassererwärmung":
+                                                                                                              0: Umwälzpumpe AUS/3-Wege-Umschaltventil auf Raumbeheizung
+                                                                                                              1: Umwälzpumpe Ein/3-Wege-Umschaltventil auf Trinkwassererwärmung
+                                                                                                              Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe.
+Wärmepumpe         3-Wege-Ventil         0x0495         BI-3         ST-3          0: Heizen, 1: Warmwasser   Status der Umwälzpumpe zur Speicherbeheizung oder des 3-Wege-Umschaltventils
+                   Heizen/WW2                                                                                 "Heizen/Trinkwassererwärmung":
+                                                                                                              0: Umwälzpumpe AUS/3-Wege-Umschaltventil auf Raumbeheizung
+                                                                                                              1: Umwälzpumpe Ein/3-Wege-Umschaltventil auf Trinkwassererwärmung
+                                                                                                              Bei 2-stufigen Wärmepumpen für die Wärmepumpe 2. Stufe.
+Wärmepumpe         E-Heizung Stufe 1     0x0488         BI-6         ST-6          0: AUS, 1: EIN             Status der Betriebsstufe 1 des Heizwasser-Durchlauferhitzers:
+                                                                                                              0: Aus
+                                                                                                              1: Ein
+Wärmepumpe         E-Heizung Stufe 1     0x0588         AI-20        IN-25         Stunden                    Summe der Betriebsstunden des Heizwasser-Durchlauferhitzers mit Betriebsstufe 1:
+                                                                                                              Gemessen ab der Erstinbetriebnahme Heizwasser-Durchlauferhitzers.
+
+Wärmepumpe         E-Heizung Stufe 2     0x0489         BI-7         ST-7          0: AUS, 1: EIN             Status der Betriebsstufe 2 des Heizwasser-Durchlauferhitzers:
+                                                                                                              0: Aus
+                                                                                                              1: Ein
+Wärmepumpe         E-Heizung Stufe 2     0x0589         AI-21        IN-26         Stunden                    Summe der Betriebsstunden des Heizwasser-Durchlauferhitzers mit Betriebsstufe 2:
+                                                                                                              Gemessen ab der Erstinbetriebnahme des Heizwasser-Durchlauferhitzers.
+
+
+
+                                                                     BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                21/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+      Gruppe         Datenpunktname           Technik-ID     BACnet-ID     Modbus-ID           Wertebereich                                     Datenpunktbeschreibung
+Wärmepumpe         Kompressor Frequenz      0x1A54         AI-90         IN-127        0..255 Hz              Kompressor Frequenz, > 0 : Verdichter EIN
+
+Wärmepumpe         Primärquelle 2           0x0483         BI-15         ST-15         0: AUS, 1: EIN         Status der Primärquelle (Primärpumpe oder Ventilator) für die Wärmepumpe 2. Stufe:
+                   (Primärpumpe)                                                                              0: Aus
+                                                                                                              1: Ein
+
+Wärmepumpe         PV-Leistung in 0,01kW    0xB060         AI-146        IN-198        kW
+                   (Phase 1)
+Wärmepumpe         PV-Leistung in 0,01kW    0xB061         AI-147        IN-199        kW
+                   (Phase 2)
+Wärmepumpe         PV-Leistung in 0,01kW    0xB062         AI-148        IN-200        kW
+                   (Phase 3)
+Wärmepumpe         Rücklauftemperatur       0x01C4         AI-71         IN-93         °C                     Rücklauftemperatur-Istwert Primärkreis oder Luftaustrittstemperatur-Istwert:
+                   Primärquelle                                                                               Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+Wärmepumpe         Sekundärpumpe            0x0484         BI-18         ST-18         0: AUS, 1: EIN         Status der Trinkwasserzirkulationspumpe:
+                                                                                                              0: Aus
+                                                                                                              1: Ein
+Wärmepumpe         Sekundärpumpe 2          0x0485         BI-19         ST-19         0: AUS, 1: EIN
+Wärmepumpe         Vorlauftemperatur        0x01C3         AI-70         IN-91         °C                     Vorlauftemperatur-Istwert Primärkreis oder Lufteintrittstemperatur-Istwert:
+                   Primärquelle                                                                               Bei 2-stufigen Wärmepumpen für die Wärmepumpe 1. Stufe
+Wärmepumpe 1       3-Wege-Ventil            0x0414         BI-48         ST-48         0: AUS, 1: EIN         Status 3-Wege-Umschaltventil "Heizen/Trinkwassererwärmung"
+                   Heizen/WW 1
+Wärmepumpe 1       Primärquelle 1           0x0402         BI-52         ST-52         0: AUS, 1: EIN         Status Primärquelle Wärmepumpe 1. Stufe
+                   (Ventilator oder
+                   Primärpumpe)
+Wärmepumpe 1       Relais EEV1 Verdichter   0x0428         BI-50         ST-50         0: AUS, 1: EIN         Status Verdichter Wärmepumpe 1. Stufe
+
+Wärmepumpe 1       Sekundärpumpe 1          0x0404         BI-54         ST-54         0: AUS, 1: EIN         Status Sekundärpumpe/Sekundärpumpe Wärmepumpe 1. Stufe
+Wärmepumpe 1       Verdichter 1 (Schütz)    0x0400         BI-55         ST-55         0: AUS, 1: EIN         Freigabe Verdichter Wärmepumpe 1. Stufe
+Wärmepumpe 2       3-Wege-Ventil            0x0415         BI-49         ST-49         0: AUS, 1: EIN         Status 3-Wege-Umschaltventil "Heizen/Trinkwassererwärmung"
+                   Heizen/WW 2
+Wärmepumpe 2       Primärquelle 2           0x0403         BI-53         ST-53         0: AUS, 1: EIN         Status Primärquelle Wärmepumpe 2. Stufe
+                   (Primärpumpe)
+Wärmepumpe 2       Relais EEV2 Verdichter   0x0429         BI-51         ST-51         0: AUS, 1: EIN         Status Verdichter Wärmepumpe 2. Stufe
+
+Wärmepumpe 2       Verdichter 2 (Schütz)    0x0401         BI-56         ST-56         0: AUS, 1: EIN         Freigabe Verdichter Wärmepumpe 2. Stufe
+
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                  22/31
+                                                                      Vitogate 300 Datenpunktliste
+
+
+      Gruppe           Datenpunktname    Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Warmwasser         (6000)              0x6000         AV-26        HO-30         10..70 °C                    Speichertemperatur-Sollwert für die Betriebsstatus "Oben" und "Normal" im Zeitprogramm
+                   Warmwassertemperatu                                                                        Warmwasser:
+                   r-Sollwert                                                                                 Falls diese Temperatur im Speicher-Wassererwärmer erreicht ist, endet die
+                                                                                                              Trinkwassererwärmung.
+                                                                                                              Falls der Speichertemperatur-Sollwert mit der Wärmepumpe nicht erreicht wird, können zur
+                                                                                                              Trinkwassernacherwärmung Zusatzheizungen zusätzlich zur Wärmepumpe eingeschaltet
+                                                                                                              werden, z. B. Heizwasser-Durchlauferhitzer oder externer Wärmeerzeuger.
+
+Warmwasser         (600C)              0x600C         AV-25        HO-29         10..70 °C                    Speichertemperatur-Sollwert für die Betriebsstatus "Temp. 2" im Zeitprogramm Warmwasser:
+                   Warmwassertemperatu                                                                        Falls diese Temperatur im Speicher-Wassererwärmer erreicht ist, endet die
+                   r-Sollwert 2                                                                               Trinkwassererwärmung.
+                                                                                                              Falls der Speichertemperatur-Sollwert mit der Wärmepumpe nicht erreicht wird, können zur
+                                                                                                              Trinkwassernacherwärmung Zusatzheizungen zusätzlich zur Wärmepumpe eingeschaltet
+                                                                                                              werden, z. B. Heizwasser-Durchlauferhitzer oder externer Wärmeerzeuger.
+
+
+
+Warmwasser         Bedarf Warmwasser    0x1185        MI-14        IN-72         0: Kein Bedarf, 1: Minimaler Wärmeanforderung des Speicher-Wassererwärmers an den Regelkreis "Warmwasser".
+                                                                                 Bedarf, 2: Geringer Bedarf, 3: Abhängig von dieser Anforderung werden die verschiedenen Wärmequellen einzeln oder
+                                                                                 Mittlerer Bedarf, 4: Hoher     gleichzeitig ein- oder ausgeschaltet.
+                                                                                 Bedarf, 5: Maximaler Bedarf
+                                                                                                                0: Kein Wärmebedarf
+                                                                                                                1: Nicht verwendet
+                                                                                                                2: Trinkwassererwärmung, geringer Wärmebedarf
+                                                                                                                3: Trinkwassererwärmung, mittlerer Wärmebedarf
+                                                                                                                4: Trinkwassererwärmung, hoher Wärmebedarf (mit Zusatzheizungen)
+                                                                                                                5: Trinkwassererwärmung, maximaler Wärmebedarf (Frostschutz Speicher-Wassererwärmer)
+
+
+
+Warmwasser         Betriebsmodus        0x1185        MI-13        IN-69         0: Abschaltbetrieb, 1:       Aktiver Betriebsstatus Trinkwassererwärmung:
+                   Warmwasser                                                    Sparbetrieb, 2:              0: Standby
+                                                                                 Normalbetrieb, 3: Festwert   1: Oben
+                                                                                                              2: Normal
+                                                                                                              3: Temp. 2
+
+
+
+
+                                                                   BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                 23/31
+                                                                             Vitogate 300 Datenpunktliste
+
+
+      Gruppe             Datenpunktname         Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                         Datenpunktbeschreibung
+Warmwasser            Einmalige               0xB020         BV-17        CO-17         0: AUS, 1: EIN              Anzeige und Einstellung der Komfortfunktion "Einmalige Warmwasserbereitung" außerhalb des
+                      Warmwasserbereitung                                                                           Zeitprogrammes:
+                                                                                                                    0: "Einmalige Warmwasserbereitung" AUS
+                                                                                                                    1: "Einmalige Warmwasserbereitung" EIN
+                                                                                                                    Für die "Einmalige Warmwasserbereitung" wird der Warmwassertemperatur-Sollwert 2
+                                                                                                                    genutzt.
+Warmwasser            Sollleistung            0x1185         AI-59        IN-71         0..100 %
+                      Warmwasser
+Warmwasser            Speicherladepumpe       0x0496         BI-22        ST-22         0: AUS, 1: EIN              Status der Speicherladepumpe:
+                                                                                                                    0: Aus
+                                                                                                                    1: Ein
+Warmwasser            Speichernachheizung     0x058A         AI-39        IN-44         Stunden                     Summe der Betriebsstunden der Speichernachheizung durch externen Wärmeerzeuger oder
+                                                                                                                    Elektro-Heizeinsatz:
+                                                                                                                    Gemessen ab der Erstinbetriebnahme des externen Wärmeerzeugers oder des Elektro-
+                                                                                                                    Heizeinsatzes
+Warmwasser            Warmwassertemperatu 0x01CD             AI-78        IN-105        °C                          Speichertemperatur-Istwert oben (Warmwassertemperatur-Istwert oben)
+                      r oben
+Warmwasser            Warmwassertemperatu 0x01CE             AI-79        IN-107        °C                          Speichertemperatur-Istwert unten (Warmwassertemperatur-Istwert unten)
+                      r unten
+Warmwasser            Warmwassertemperatu 0x1185             AI-58        IN-70         °C                          Tatsächlich verwendeter Speichertemperatur-Sollwert (Warmwassertemperatur-Sollwert)
+                      r-Sollwert
+Warmwasser            Zirkulationspumpe   0x0490             BI-16        ST-16         0: AUS, 1: EIN              Status der Trinkwasserzirkulationspumpe:
+                                                                                                                    0: Aus
+                                                                                                                    1: Ein
+Zentrale Funktionen   Aktiver Anlagen-        0xA391         AI-4         IN-6          °C                          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              /Solltemperaturwert                                                                           Wärmeerzeuger".
+
+Zentrale Funktionen   Anlagen-/Heizkessel-    0xA380         MV-8         HO-48         0: AUS, 1: EIN, 255: AUTO   Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Sollleistung - Status                                                                         Wärmeerzeuger".
+Zentrale Funktionen   Anlagen-/Heizkessel-    0xA380         AV-4         HO-7          0..100 %                    Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Sollleistung - Wert                                                                           Wärmeerzeuger".
+Zentrale Funktionen   Anlagen-Istleistung -   0xA38F         MI-46        IN-160        0: AUS, 1: EIN              Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Status                                                                                        Wärmeerzeuger".
+Zentrale Funktionen   Anlagen-Istleistung -   0xA38F         AI-9         IN-14         0..100 %                    Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Wert                                                                                          Wärmeerzeuger".
+Zentrale Funktionen   Anlagenvorlauf-         0xA393         AI-11        IN-16         °C                          Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              /Kesseltemperatur                                                                             Wärmeerzeuger".
+                      Istwert
+
+
+                                                                          BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                     24/31
+                                                                           Vitogate 300 Datenpunktliste
+
+
+         Gruppe          Datenpunktname       Technik-ID    BACnet-ID     Modbus-ID          Wertebereich                                              Datenpunktbeschreibung
+Zentrale Funktionen   Betriebsart -         0xA382         MV-21        HO-76         0: HVAC_AUTO, 1:                Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Anlage/Heizkessel                                               HVAC_HEAT, 2:                   Wärmeerzeuger".
+                                                                                      HVAC_MRNG_WRMUP, 3:
+                                                                                      HVAC_COOL, 6: HVAC_OFF,
+                                                                                      7: HVAC_TEST, 8:
+                                                                                      HVAC_EMERG_HEAT, 10:
+                                                                                      HVAC_FREE_COOL, 12:
+                                                                                      HVAC_MAX_HEAT, 13:
+                                                                                      HVAC_ECONOMY, 14:
+                                                                                      HVAC_DEHUMID, 16:
+                                                                                      HVAC_EMERG_COOL, 111:
+                                                                                      HVAC_LOW_FIRE, 112:
+                                                                                      HVAC_HIGH_FIRE, 255:
+                                                                                      HVAC_NUL
+
+Zentrale Funktionen   Vorlauftemperatur-     0xA383        AV-6         HO-9          °C                              Weitere Informationen siehe separate Anleitung "Anwendungshinweise für verschiedene
+Regelung              Sollwert                                                                                        Wärmeerzeuger".
+                      Anlage/Heizkessel
+Zusatzinformationen   (7102) Raumtemperatur- 0x7102        AV-22        HO-25         10..30 °C                       Raumtemperatur-Sollwert separater Kühlkreis:
+                      Sollwert Kühlkreis                                                                              Bei Kühlung über einen Heiz-/Kühlkreis ist der Raumtemperatur-Sollwert durch
+                                                                                                                      "Raumtemperatur Normal 2000" vorgegeben.
+Zusatzinformationen   Anlagenvorlauf        0x01CA         MI-27        IN-102        0: Sensor OK, 1: Sensor         Status des Vorlauftemperatursensors Anlage (hinter Heizwasser-Pufferspeicher):
+                                                                                      Kurzschluss, 2: Sensor          0: Sensor ist i. O.
+                                                                                      Unterbrechung, 3: Sensor        1: Kurzschluss
+                                                                                      Referenzfehler, 4: Sensor       2: Unterbrechung
+                                                                                      Referenz unter Min, 5:
+                                                                                      Sensor Referenz über Max, 6:
+                                                                                      Sensor nicht vorhanden, 7:
+                                                                                      Sensor Check, 8: Sensor
+                                                                                      Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Ausgang Verdichter KK2 0xB4C3        AI-143       IN-192
+
+
+
+
+                                                                        BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                       25/31
+                                                                              Vitogate 300 Datenpunktliste
+
+
+         Gruppe          Datenpunktname          Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                             Datenpunktbeschreibung
+Zusatzinformationen   Außentemperatur          0x01C1         MI-22        IN-90         0: Sensor OK, 1: Sensor
+                                                                                         Kurzschluss, 2: Sensor
+                                                                                         Unterbrechung, 3: Sensor
+                                                                                         Referenzfehler, 4: Sensor
+                                                                                         Referenz unter Min, 5:
+                                                                                         Sensor Referenz über Max, 6:
+                                                                                         Sensor nicht vorhanden, 7:
+                                                                                         Sensor Check, 8: Sensor
+                                                                                         Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Bedienbetriebsart        0xB003         MV-16        HO-69         0: Abschaltbetrieb, 1: Nur      Anzeige und Einstellung des Betriebsprogramms für den separaten Kühlkreis SKK:
+                      Kühlkreis                                                          WW, 2: Kühlen/WW, 4:            0: Abschaltbetrieb (Frostschutz)
+                                                                                         Dauernd Reduziert, 5:           1: Nur Trinkwassererwärmung ("Nur Warmwasser")
+                                                                                         Dauernd Normal, 6: Normal       2: Kühlung und Trinkwassererwärmung ("Kühlen und WW")
+                                                                                         Abschalt, 7: Nur Kühlen
+
+Zusatzinformationen   Betriebsstunden          0x0581         AI-40        IN-45         Stunden                         Summe der Betriebsstunden des Verdichters für die Wärmepumpe 2. Stufe oder des
+                      Verdichter 2                                                                                       Verdichters 2 bei Wärmepumpen mit 2-stufigem Kältekreis:
+                                                                                                                         Gemessen ab der Erstinbetriebnahme der Wärmepumpe.
+Zusatzinformationen   Faktor Energiepreise     0x7BEE         AV-53        HO-70         0: 1/100, 1: 1/10, 2: 1         Faktor für die angegebenen Energiepreise:
+                                                                                                                         0: Zahlenwert 1 entspricht 1/100 Ct.
+                                                                                                                         1: Zahlenwert 1 entspricht 1/10 Ct.
+                                                                                                                         2: Zahlenwert 1 entspricht 1 Ct.
+Zusatzinformationen   Feuchtesensor - Status   0x0A06         MI-51        IN-195        0: Sensor OK, 1: Sensor
+                                                                                         Kurzschluss, 2: Sensor
+                                                                                         Unterbrechung, 3: Sensor
+                                                                                         Referenzfehler, 4: Sensor
+                                                                                         Referenz unter Min, 5:
+                                                                                         Sensor Referenz über Max, 6:
+                                                                                         Sensor nicht vorhanden, 7:
+                                                                                         Sensor Check, 8: Sensor
+                                                                                         Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                           BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                         26/31
+                                                                            Vitogate 300 Datenpunktliste
+
+
+         Gruppe           Datenpunktname       Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                            Datenpunktbeschreibung
+Zusatzinformationen   Kollektortemperatur    0x01D1         MI-31        IN-112        0: Sensor OK, 1: Sensor       Status des Kollektortemperatursensors:
+                      Solar                                                            Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                       Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                       Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                       Referenz unter Min, 5:
+                                                                                       Sensor Referenz über Max, 6:
+                                                                                       Sensor nicht vorhanden, 7:
+                                                                                       Sensor Check, 8: Sensor
+                                                                                       Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Korrekturfaktor        0x7BEF         AV-54        HO-71         keine Anzeige der               Faktor Energiebilanz Fossil
+                      Energieblianz                                                    Energiebilanz, 1: 1 Digit = 0,1 0 = keine Anzeige der Energiebilanz
+                                                                                       kWh, 10: 1 Digit = 1 kWh,       1 = 1 Digit = 0,1 kWh
+                                                                                       100: 1 Digit = 10 kWh           10 = 1 Digit = 1 kWh
+                                                                                                                       100 = 1 Digit = 10 kWh
+Zusatzinformationen   Leistung Verdichter KK2 0xB4A3        AI-142       IN-191        %                               Leistung des Verdichters für die Wärmepumpe 2. Stufe oder des Verdichters 2 bei
+                                                                                                                       Wärmepumpen mit 2-stufigem Kältekreis: Anzeige des Soll- oder Istwerts, abhängig vom
+                                                                                                                       eingebauten Typ des Verdichters:
+                                                                                                                       Nur für Verdichter mit Leistungsregelung.
+Zusatzinformationen   Pufferspeichertemperat 0x01CB         MI-28        IN-104        0: Sensor OK, 1: Sensor         Status des Puffertemperatursensors:
+                      ur                                                               Kurzschluss, 2: Sensor          0: Sensor ist i. O.
+                                                                                       Unterbrechung, 3: Sensor        1: Kurzschluss
+                                                                                       Referenzfehler, 4: Sensor       2: Unterbrechung
+                                                                                       Referenz unter Min, 5:
+                                                                                       Sensor Referenz über Max, 6:
+                                                                                       Sensor nicht vorhanden, 7:
+                                                                                       Sensor Check, 8: Sensor
+                                                                                       Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                         BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                         27/31
+                                                                         Vitogate 300 Datenpunktliste
+
+
+         Gruppe          Datenpunktname     Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                          Datenpunktbeschreibung
+Zusatzinformationen   Raumtemperatur      0x01D7         MI-20        IN-86         0: Sensor OK, 1: Sensor       Status des Raumtemperatursensors für den Heizkreis M2/HK2:
+                      Heizkreis M2/HK2                                              Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                    Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                    Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                    Referenz unter Min, 5:
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Raumtemperatur      0x01D8         MI-21        IN-87         0: Sensor OK, 1: Sensor       Status des Raumtemperatursensors für den Heizkreis M3/HK3:
+                      Heizkreis M3/HK3                                              Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                    Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                    Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                    Referenz unter Min, 5:
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Raumtemperatursensor 0x01D6        MI-44        IN-157        0: Sensor OK, 1: Sensor       Status des Raumtemperatursensors für den Heizkreis A1/HK1:
+                      Heizkreis A1/HK1 -                                            Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                      Status                                                        Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                    Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                    Referenz unter Min, 5:
+                                                                                    Sensor Referenz über Max, 6:
+                                                                                    Sensor nicht vorhanden, 7:
+                                                                                    Sensor Check, 8: Sensor
+                                                                                    Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                      BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                              28/31
+                                                                             Vitogate 300 Datenpunktliste
+
+
+         Gruppe           Datenpunktname        Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Zusatzinformationen   Rücklauftemperatur      0x01D2         MI-32        IN-114        0: Sensor OK, 1: Sensor       Status des Rücklauftemperatursensors Solarkreis:
+                      Solar                                                             Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                        Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                        Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                        Referenz unter Min, 5:
+                                                                                        Sensor Referenz über Max, 6:
+                                                                                        Sensor nicht vorhanden, 7:
+                                                                                        Sensor Check, 8: Sensor
+                                                                                        Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Sekundär-               0xB483         AI-144       IN-193        °C
+                      Rücklauftemperatur
+                      (Kältekreis 2)
+Zusatzinformationen   Speichertemperatur      0x01D3         MI-33        IN-116        0: Sensor OK, 1: Sensor       Status des Speichertemperatursensors Solarkreis (Anschluss an externe Solarregelung Vitosolic
+                      Solar                                                             Kurzschluss, 2: Sensor        oder Solarregelungsmodul, Typ SM1):
+                                                                                        Unterbrechung, 3: Sensor      0: Sensor ist i. O.
+                                                                                        Referenzfehler, 4: Sensor     1: Kurzschluss
+                                                                                        Referenz unter Min, 5:        2: Unterbrechung
+                                                                                        Sensor Referenz über Max, 6:
+                                                                                        Sensor nicht vorhanden, 7:
+                                                                                        Sensor Check, 8: Sensor
+                                                                                        Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Status Sensor Vorlauf   0x01D9         MI-45        IN-158        0: Sensor OK, 1: Sensor
+                      Kühlung                                                           Kurzschluss, 2: Sensor
+                                                                                        Unterbrechung, 3: Sensor
+                                                                                        Referenzfehler, 4: Sensor
+                                                                                        Referenz unter Min, 5:
+                                                                                        Sensor Referenz über Max, 6:
+                                                                                        Sensor nicht vorhanden, 7:
+                                                                                        Sensor Check, 8: Sensor
+                                                                                        Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Strom Hochtarif         0x7BE9         AV-48        HO-64         0..32767 ct / kWh               Strompreis für 1 kWh im Hochtarif:
+                                                                                                                        Diese Angabe ist erforderlich, falls ökonomischer Betrieb eingestellt ist.
+
+
+                                                                          BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                           29/31
+                                                                          Vitogate 300 Datenpunktliste
+
+
+         Gruppe           Datenpunktname     Technik-ID    BACnet-ID     Modbus-ID          Wertebereich                                                   Datenpunktbeschreibung
+Zusatzinformationen   Strom Niedertarif    0x7BEA         AV-49        HO-65         0..32767 ct / kWh               Strompreis für 1 kWh im Niedertarif:
+                                                                                                                     Diese Angabe ist erforderlich, falls ökonomischer Betrieb eingestellt ist.
+Zusatzinformationen   Strompreis           0x7BED         AV-43        HO-58         0..32767 ct / kWh               Stromgestehungskosten für 1 kWh Strom der Photovoltaikanlage:
+                      Eigenverbrauch                                                                                 Diese Angabe ist erforderlich, falls ökonomischer Betrieb eingestellt ist.
+Zusatzinformationen   Vorlauftemperatur    0x01D4         MI-34        IN-118        0: Sensor OK, 1: Sensor         Status des Vorlauftemperatursensors für den Heiz-/Kühlkreis M2/HK2:
+                      Heizkreis M2/HK2                                               Kurzschluss, 2: Sensor          0: Sensor ist i. O.
+                                                                                     Unterbrechung, 3: Sensor        1: Kurzschluss
+                                                                                     Referenzfehler, 4: Sensor       2: Unterbrechung
+                                                                                     Referenz unter Min, 5:
+                                                                                     Sensor Referenz über Max, 6:
+                                                                                     Sensor nicht vorhanden, 7:
+                                                                                     Sensor Check, 8: Sensor
+                                                                                     Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Vorlauftemperatur    0x01D5         MI-35        IN-120        0: Sensor OK, 1: Sensor       Status des Vorlauftemperatursensors für den Heiz-/Kühlkreis M3/HK3:
+                      Heizkreis M3/HK3                                               Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                     Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                     Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                     Referenz unter Min, 5:
+                                                                                     Sensor Referenz über Max, 6:
+                                                                                     Sensor nicht vorhanden, 7:
+                                                                                     Sensor Check, 8: Sensor
+                                                                                     Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatzinformationen   Warmwassertemperatu 0x01CD          MI-29        IN-106        0: Sensor OK, 1: Sensor       Status des Speichertemperatursensors oben:
+                      r oben                                                         Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                     Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                     Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                     Referenz unter Min, 5:
+                                                                                     Sensor Referenz über Max, 6:
+                                                                                     Sensor nicht vorhanden, 7:
+                                                                                     Sensor Check, 8: Sensor
+                                                                                     Fehler, 9: Sensor Kom. Fehler
+
+
+
+
+                                                                       BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                                 30/31
+                                                                          Vitogate 300 Datenpunktliste
+
+
+         Gruppe            Datenpunktname    Technik-ID    BACnet-ID     Modbus-ID           Wertebereich                                           Datenpunktbeschreibung
+Zusatzinformationen    Warmwassertemperatu 0x01CE         MI-30        IN-108        0: Sensor OK, 1: Sensor       Status des Speichertemperatursensors unten:
+                       r unten                                                       Kurzschluss, 2: Sensor        0: Sensor ist i. O.
+                                                                                     Unterbrechung, 3: Sensor      1: Kurzschluss
+                                                                                     Referenzfehler, 4: Sensor     2: Unterbrechung
+                                                                                     Referenz unter Min, 5:
+                                                                                     Sensor Referenz über Max, 6:
+                                                                                     Sensor nicht vorhanden, 7:
+                                                                                     Sensor Check, 8: Sensor
+                                                                                     Fehler, 9: Sensor Kom. Fehler
+
+
+
+Zusatz-Wärmeerzeuger   Bivalenztemperatur       0xB380    AI-124       IN-170        °C
+                       Wärmepumpe
+Zusatz-Wärmeerzeuger   Gemeinsame               0x01F7    AI-123       IN-169        °C
+                       Vorlauftemperatur
+Zusatz-Wärmeerzeuger   Kesseltemperatur Zusatz- 0xB370    AI-121       IN-167        °C                          Kesseltemperatur des Zusatz-Wärmeerzeugers
+                       Wärmeerzeuger
+
+Zusatz-Wärmeerzeuger   Kesseltemperatur-      0xB371      AI-122       IN-168        °C                          Kesselsolltemperatur des Zusatz-Wärmeerzeugers
+                       Sollwert Zusatz-
+                       Wärmeerzeuger
+Zusatz-Wärmeerzeuger   Umschaltventil ext. WE 0x04BE      BI-58        ST-58         0: AUS, 1: EIN              Umschaltventil externer Wärmeerzeuger (Ventil "nur WP / parallel")
+
+Zusatz-Wärmeerzeuger   Umschaltventil WP       0x04BD     BI-57        ST-57         0: AUS, 1: EIN              Umschaltung Ventil "mit WP / nur GWG"
+
+
+
+
+                                                                       BACnet/Modbus Objekt-ID/Register-Nr. Berechnung:
+204D_Vitocal_xxx-S_Vitotronic_200_Typ_WO1C Objekt-ID=100000*(Anlagen-Nr.- 1)+1000*(Teilnehmer-Nr.-1)+"BACnet-ID"
+ab Vers. 2.1.2.0                           Register-Nr.=12500*(Anlagen-Nr.- 1)+500*(Teilnehmer-Nr.-1)+"Modbus-ID"                                                                     31/31
+

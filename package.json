@@ -1,0 +1,14 @@
+{
+  "name": "vitocal-wo1c-runtime-control",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Safety-gated vcontrold/ioBroker runtime control preparation for Vitocal 200-S WO1C (204D)",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check-project.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
