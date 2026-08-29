@@ -38,6 +38,11 @@ if (!fs.existsSync(overviewPath)) {
     for (const requiredOverviewFragment of [
         '## 3. Sicherheitsmodell: kein EEPROM-Schreibweg',
         '## 4. Schreibbare ioBroker-Datenpunkte',
+        '### Wo die erlaubten Werte in ioBroker sichtbar sind',
+        '### Exakte Bedeutung der fünf neuen Runtime-Kandidaten',
+        '### Akzeptierte Eingabetypen',
+        '### Bedeutung des `ack`-Flags',
+        '### Konkrete Schreibfolgen',
         'viessmann.0.set.BetriebsartExternHK1',
         'viessmann.0.set.RaumsollExternHK1',
         'viessmann.0.set.VorlaufsollExternHK1',
